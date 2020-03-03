@@ -1,0 +1,60 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/gooroomee?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Seoul
+    username: jinyoung.kim
+    password: 1234
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    open-in-view: false
+    show-sql: true
+    hibernate:
+      format_sql: true
+      ddl-auto: update
+
+  jackson:
+    deserialization:
+      fail-on-unknown-properties : true
+
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 200MB
+      max-request-size: 215MB
+
+  http:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+
+jwt:
+  secretKey: govlepel@$&amp;
+
+
+log:
+  slack:
+    enabled: true
+    webHookUrl: https://hooks.slack.com/services/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
+    channel: backend_logback
+  database:
+    enabled: true
+  level: ERROR
+
+
+file:
+  upload-dir: ./files
+  projectimage-dir: ./files/projectimg
+  profileimage-dir: ./files/profileimg
+
+
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: DEBUG
+        type:
+          descriptor:
+            sql:
+              BasicBinder: TRACE
