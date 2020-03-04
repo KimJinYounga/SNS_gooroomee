@@ -1,4 +1,4 @@
-package com.gooroomee.api.boardList;
+package com.gooroomee.api.board;
 
 import com.gooroomee.api.user.User;
 import lombok.*;
@@ -11,17 +11,28 @@ import java.util.Date;
 @NoArgsConstructor
 @Getter
 @Setter
-//@EqualsAndHashCode(of="user_id")
+@EqualsAndHashCode(of="boardId")
 @Entity
-@Table(name="BoardList")
-public class BoardList {
-    @Id
+@Table(name="board")
+public class Board {
+    @Id @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @Column(name="boardId")
     private long boardId;
+
+    @Column(name="title")
     private String title;
+
+    @Column(name="contents")
     private String contents;
+
+    @Column(name="date")
     private Date date;
+
+    @Column(name="email")
+    private String email;
 
     @ManyToOne
     @JoinColumn(name = "userId")
     private User user;
+
 }
