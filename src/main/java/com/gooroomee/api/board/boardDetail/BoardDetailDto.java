@@ -1,18 +1,14 @@
-package com.gooroomee.api.board;
+package com.gooroomee.api.board.boardDetail;
 
-import com.gooroomee.api.user.User;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import java.util.Date;
 
 @Getter
+@Setter
 @AllArgsConstructor
 @Builder
+@NoArgsConstructor
 public class BoardDetailDto {
     private String title;
     private String contents;

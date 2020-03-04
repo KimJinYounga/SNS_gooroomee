@@ -1,4 +1,4 @@
-package com.gooroomee.api.board;
+package com.gooroomee.api.board.boardDetail;
 
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
