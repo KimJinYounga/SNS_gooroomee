@@ -5,17 +5,20 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.internal.Errors;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @Controller
 @Slf4j
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*")
 public class UserController {
 
     private final UserService userService;
 
     @PostMapping("/signup")
+
     public ResponseEntity signup(@RequestBody User user, Errors errors) {
         if(userService.signup(user))
             return ResponseEntity.ok().build();
