@@ -15,6 +15,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 @Controller
 @Slf4j
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*")
 @RequestMapping("/board")
 public class BoardDetailController {
     private final BoardDetailService boardDetailService;

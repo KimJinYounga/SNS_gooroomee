@@ -9,6 +9,7 @@ import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -18,6 +19,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/board")
+@CrossOrigin(origins = "*")
 public class BoardListController {
     private final BoardListService boardListService;
 

@@ -21,8 +21,9 @@ public class UserService {
         Optional<SignInDto> findUser = userRepository.findByEmail(signinDto.getEmail());
         if(!findUser.isEmpty()) {
             SignInDto existinguser = findUser.get();
-            if(existinguser.getPassword().equals(signinDto.getPassword()))
+            if(existinguser.getPassword().equals(signinDto.getPassword())) {
                 return true;
+            }
         }
         return false;
     }
