@@ -1,13 +1,23 @@
 <template>
-    <div>
-        Hello Nuxt.js
-    </div>
+    <nav>
+        <div>profile page</div>
+    </nav>
     
 </template>
 
 <script>
     export default {
-        name: "profile.vue"
+        name: "profile.vue",
+        data() {
+            return {
+                name:'Nuxt.js',
+            }
+        },
+        head() {
+            return {
+                title:'프로필'
+            }
+        }
     }
 </script>
 
