@@ -1,7 +1,5 @@
-package com.gooroomee.api.user;
+package com.gooroomee.api.member;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 import javax.persistence.*;
@@ -10,23 +8,27 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@Setter
-@EqualsAndHashCode(of="userId")
+//@Setter
+@EqualsAndHashCode(of="memberId")
 @Entity
-@Table(name="user",
+@Table(name="member",
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = {"email"}, name = "email_unique")})
-public class User {
-    @Id @GeneratedValue(strategy= GenerationType.IDENTITY)
-    @Column(name="userId")
-    private long userId;
+public class Member{
+    @Id
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @Column(name="memberId")
+    private Long memberId;
 
     @Column(name="email", unique = true)
+    @Setter
     private String email;
 
     @Column(name="name")
+    @Setter
     private String name;
 
     @Column(name="password")
+    @Setter
     private String password;
 }

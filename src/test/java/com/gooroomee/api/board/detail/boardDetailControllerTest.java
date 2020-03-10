@@ -1,11 +1,11 @@
-package com.gooroomee.api.board.boardDetail;
+package com.gooroomee.api.board.detail;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gooroomee.api.board.Board;
 import com.gooroomee.api.board.BoardRepository;
 import com.gooroomee.api.common.TestDescription;
-import com.gooroomee.api.user.User;
-import com.gooroomee.api.user.UserRepository;
+import com.gooroomee.api.member.Member;
+import com.gooroomee.api.member.MemberRepository;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,7 +18,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -38,7 +38,7 @@ public class boardDetailControllerTest {
     BoardRepository boardRepository;
 
     @Autowired
-    UserRepository userRepository;
+    MemberRepository memberRepository;
 
     @Autowired
     ObjectMapper objectMapper;
@@ -49,18 +49,19 @@ public class boardDetailControllerTest {
     @Test
     @TestDescription("글 생성 성공")
     public void Test() throws Exception {
-        this.generateUser("User01");
+        this.generateMember("User01");
+        this.generateMember("User02");
         BoardDetailDto boardDetailDto = BoardDetailDto.builder()
                 .title("게시판 제목 입니다! ")
                 .email("User01")
-                .contents("User01의 게시판 내용")
-                .date(new Date())
+                .content("User01의 게시판 내용")
+                .reg_date(LocalDateTime.now())
                 .build();
         BoardDetailDto boardDetailDto1 = BoardDetailDto.builder()
                 .title("게시판 제목 입니다! ")
                 .email("User02")
-                .contents("User02의 게시판 내용")
-                .date(new Date())
+                .content("User02의 게시판 내용")
+                .reg_date(LocalDateTime.now())
                 .build();
 
         mockMvc.perform(post("/board")
@@ -94,12 +95,12 @@ public class boardDetailControllerTest {
     @TestDescription("게시판 글 수정")
     public void TestC() throws Exception {
         // Given
-        Optional<Board> optionalBoard = this.boardRepository.findById((long) 1);
+        Optional<Board> optionalBoard = this.boardRepository.findById(Long.valueOf(1));
         Board board = optionalBoard.get();
         BoardDetailDto boardDetailDto = BoardDetailDto.builder()
                 .title("수정한 제목임")
-                .date(board.getDate())
-                .contents(board.getContents())
+                .reg_date(board.getReg_date())
+                .content(board.getContent())
                 .email(board.getEmail())
                 .build();
         // When & Then
@@ -123,16 +124,16 @@ public class boardDetailControllerTest {
     @TestDescription("게시글 삭제 실패")
     public void deleteBoardFailed() throws Exception {
         this.mockMvc.perform(delete("/board/40"))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isNotFound())
                 .andDo(print());
     }
 
-    private void generateUser(String user01) {
-        User user = User.builder()
-                .email(user01)
+    private void generateMember(String member_id) {
+        Member member = Member.builder()
+                .email(member_id)
                 .password("123")
                 .name("김진영")
                 .build();
-        this.userRepository.save(user);
+        this.memberRepository.save(member);
     }
 }

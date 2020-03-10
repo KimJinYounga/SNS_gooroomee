@@ -1,4 +1,4 @@
-package com.gooroomee.api.board.boardDetail;
+package com.gooroomee.api.board.detail;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,8 +23,6 @@ public class BoardDetailController {
     @GetMapping(value = "/{board_id}")
     public ResponseEntity getBoardDetail(@PathVariable Long board_id){
         BoardDetailDto board = boardDetailService.getBoard(board_id);
-        if(board == null)
-            return ResponseEntity.notFound().build();
         BoardDetailResource boardResource = new BoardDetailResource(board, board_id);
         boardResource.add(linkTo(BoardDetailController.class).slash(board_id).withRel("updateBoard"));
         boardResource.add(linkTo(BoardDetailController.class).slash(board_id).withRel("deleteBoard"));
@@ -33,28 +31,34 @@ public class BoardDetailController {
 
     @PostMapping
     public ResponseEntity createBoard(@RequestBody @Valid BoardDetailDto boardDetailDto, Errors errors) {
-        if(this.boardDetailService.storeBoard(boardDetailDto))
+        try{
+            this.boardDetailService.storeBoard(boardDetailDto);
             return ResponseEntity.ok().build();
-        else
+        }catch(IllegalArgumentException e){
             return ResponseEntity.badRequest().body("게시판등록실패");
+        }
     }
 
     @PutMapping("/{board_id}")
     public ResponseEntity updateBoard(@PathVariable Long board_id,
-                                      @RequestBody @Valid BoardDetailDto boardDetailDto,
-                                      Errors errors) {
-        BoardDetailDto updatedBoard = this.boardDetailService.updateBoard(board_id, boardDetailDto);
-        if (updatedBoard == null)
-            return ResponseEntity.notFound().build();
-        BoardDetailResource boardDetailResource = new BoardDetailResource(updatedBoard, board_id);
-        return ResponseEntity.ok(boardDetailResource);
+                                      @RequestBody @Valid BoardDetailDto boardDetailDto) {
+        try{
+            BoardDetailDto updatedBoard = this.boardDetailService.updateBoard(board_id, boardDetailDto);
+            BoardDetailResource boardDetailResource = new BoardDetailResource(updatedBoard, board_id);
+            return ResponseEntity.ok(boardDetailResource);
+        }catch(IllegalArgumentException e){
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @DeleteMapping("/{board_id}")
     public ResponseEntity deleteBoard(@PathVariable Long board_id) {
-        if(this.boardDetailService.deleteBoard(board_id))
+        try{
+            this.boardDetailService.deleteBoard(board_id);
             return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
-        else
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("해당 게시글이 없습니다.");
+        }catch(IllegalArgumentException e){
+            return ResponseEntity.badRequest().build();
+        }
+
     }
 }

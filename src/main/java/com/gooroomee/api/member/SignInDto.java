@@ -1,4 +1,4 @@
-package com.gooroomee.api.user;
+package com.gooroomee.api.member;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

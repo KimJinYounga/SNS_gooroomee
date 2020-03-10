@@ -1,11 +1,11 @@
-package com.gooroomee.api.board.boardList;
+package com.gooroomee.api.board.list;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gooroomee.api.board.BoardRepository;
-import com.gooroomee.api.board.boardDetail.BoardDetailDto;
+import com.gooroomee.api.board.detail.BoardDetailDto;
 import com.gooroomee.api.common.TestDescription;
-import com.gooroomee.api.user.User;
-import com.gooroomee.api.user.UserRepository;
+import com.gooroomee.api.member.Member;
+import com.gooroomee.api.member.MemberRepository;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,7 +17,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import java.util.Date;
+
+import java.time.LocalDateTime;
 import java.util.stream.IntStream;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -38,7 +39,7 @@ public class BoardListControllerTest {
     BoardRepository boardRepository;
 
     @Autowired
-    UserRepository userRepository;
+    MemberRepository memberRepository;
 
     @Autowired
     ObjectMapper objectMapper;
@@ -74,18 +75,18 @@ public class BoardListControllerTest {
     }
 
     private BoardDetailDto generateBoards(int index) {
-        User user = User.builder()
+        Member member = Member.builder()
                 .name("name"+index)
                 .password("pw"+index)
                 .email("jinyoung.kim@gooroomee.com"+index)
                 .build();
-        userRepository.save(user);
+        memberRepository.save(member);
 
         BoardDetailDto boardList = BoardDetailDto.builder()
                 .title("글 제목 "+index)
-                .date(new Date())
-                .contents("글 상세 정보 입니다 "+index*10)
-                .email(user.getEmail())
+                .reg_date(LocalDateTime.now())
+                .content("글 상세 정보 입니다 "+index*10)
+                .email(member.getEmail())
                 .build();
 
         return boardList;
