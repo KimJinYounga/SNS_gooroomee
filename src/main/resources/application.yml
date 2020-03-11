@@ -43,11 +43,6 @@ log:
   level: ERROR
 
 
-file:
-  upload-dir: ./files
-  projectimage-dir: ./files/projectimg
-  profileimage-dir: ./files/profileimg
-
 
 logging:
   level:
