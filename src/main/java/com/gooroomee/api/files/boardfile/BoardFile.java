@@ -17,7 +17,7 @@ public class BoardFile {
     private String id;
     private String fileName;
     private String fileType;
-    @Lob
+    @Lob // mysql -> LONGBLOB
     private byte[] data;
     public BoardFile(){}
     public BoardFile(String fileName, String fileType, byte[] data){
