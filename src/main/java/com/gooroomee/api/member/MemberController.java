@@ -16,7 +16,6 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping("/signup")
-
     public ResponseEntity signup(@RequestBody Member member, Errors errors){
         try{
             memberService.signup(member);
