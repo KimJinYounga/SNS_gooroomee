@@ -2,16 +2,11 @@ package com.gooroomee.api.member;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gooroomee.api.common.TestDescription;
-import com.gooroomee.api.error.ExceptionHandleController;
-import com.gooroomee.api.error.exception.MemberNotFoundException;
-import org.junit.Before;
+import com.gooroomee.api.member.security.SignInDto;
 import org.junit.FixMethodOrder;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
-import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,10 +14,7 @@ import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
-import org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver;
 
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -58,6 +50,7 @@ public class MemberControllerTest {
 //                .alwaysDo(print())
 //                .build();
 //    }
+
     @Test
     @TestDescription("회원가입_아이디 중복 없을 때 성공 테스트")
     public void TestA() throws Exception {
@@ -65,7 +58,7 @@ public class MemberControllerTest {
         Member member = this.memberBuilder();
 
         // When & Then
-        this.mockMvc.perform(post("/signup")
+        this.mockMvc.perform(post("/auth/signup")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(this.objectMapper.writeValueAsString(member)))
                 .andExpect(status().isOk())
@@ -83,7 +76,7 @@ public class MemberControllerTest {
                 .build();
 
         // When & Then
-        this.mockMvc.perform(post("/signup")
+        this.mockMvc.perform(post("/auth/signup")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(this.objectMapper.writeValueAsString(existingEmail)))
                 .andExpect(status().isOk())
@@ -99,7 +92,7 @@ public class MemberControllerTest {
                 .password("1234")
                 .build();
 
-        this.mockMvc.perform(post("/signin")
+        this.mockMvc.perform(post("/auth/signin")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(this.objectMapper.writeValueAsBytes(signInDto)))
                 .andExpect(status().isOk())
