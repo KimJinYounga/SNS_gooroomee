@@ -39,12 +39,7 @@ public class AuthController {
     @PostMapping("/signin")
     public ResponseEntity signin(@RequestBody SignInDto signinDto){
         Member member=authService.signin(signinDto);
-//        MultiValueMap<String, String> header = new LinkedMultiValueMap<>();
-//        header.add("authToken", jwtTokenProvider.createToken(member.getUsername(), member.getRoles()));
-//        return new ResponseEntity(header, HttpStatus.OK);
-//        return new ResponseEntity(header, HttpStatus.OK);
         String token = jwtTokenProvider.createToken(String.valueOf(member.getUsername()), member.getRoles());
-        log.info("token========================="+token);
         return ResponseEntity.ok().header("token", token).build();
     }
 
