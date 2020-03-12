@@ -1,4 +1,4 @@
-package com.gooroomee.api.board.boardList;
+package com.gooroomee.api.board.list;
 
 import com.gooroomee.api.board.Board;
 import lombok.RequiredArgsConstructor;
@@ -29,12 +29,8 @@ public class BoardListController {
     @GetMapping
     public ResponseEntity getBoardsList(Pageable pageable, PagedResourcesAssembler<Board> assembler) {
         Page<Board> page = this.boardListService.getBoardsList(pageable);
-        if (page==null)
-            return ResponseEntity.notFound().build();
-
         PagedModel<BoardListResource> pagedResources = assembler.toModel(page, e -> new BoardListResource(e));
         pagedResources.add(linkTo(BoardListController.class).withRel("boards-list"));
-
         return ResponseEntity.ok(pagedResources);
     }
 }
