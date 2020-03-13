@@ -29,8 +29,8 @@ spring:
       enabled: true
       force: true
 
-jwt:
-  secretKey: govlepel@$&amp;
+  jwt:
+    secretKey: govlepel@$&amp;
 
 
 log:
