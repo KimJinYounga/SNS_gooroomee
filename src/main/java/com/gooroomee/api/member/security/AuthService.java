@@ -3,6 +3,7 @@ package com.gooroomee.api.member.security;
 import com.gooroomee.api.error.exception.MemberNotFoundException;
 import com.gooroomee.api.member.Member;
 import com.gooroomee.api.member.MemberRepository;
+import com.gooroomee.api.member.security.exception.CDuplicatedEmailException;
 import com.gooroomee.api.member.security.exception.CEmailSigninFailedException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,6 +29,10 @@ public class AuthService {
                     .build();
             memberRepository.save(member);
         }
+        else{
+            throw new CDuplicatedEmailException();
+        }
+
     }
 
     @Transactional

@@ -2,6 +2,7 @@ package com.gooroomee.api.member.security;
 
 import com.gooroomee.api.member.Member;
 import com.gooroomee.api.member.MemberRepository;
+import com.gooroomee.api.member.security.exception.CDuplicatedEmailException;
 import com.gooroomee.api.member.security.exception.CEmailSigninFailedException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -55,6 +56,11 @@ public class AuthController {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(CEmailSigninFailedException.class)
     protected ResponseEntity emailSigninFailed(HttpServletRequest request, CEmailSigninFailedException e){
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("비밀번호가 정확하지 않습니다.");
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("비밀번호가 정확하지 않습니다.");
+    }
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(CDuplicatedEmailException.class)
+    protected ResponseEntity emailSigninFailed(HttpServletRequest request, CDuplicatedEmailException e){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("다른 사용자가 이메일을 사용중입니다.");
     }
 }

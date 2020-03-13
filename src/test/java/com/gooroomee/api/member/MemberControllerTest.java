@@ -3,6 +3,7 @@ package com.gooroomee.api.member;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gooroomee.api.common.TestDescription;
 import com.gooroomee.api.member.security.SignInDto;
+import com.gooroomee.api.member.security.SignUpDto;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,6 +13,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.http.MediaType;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
@@ -37,30 +39,19 @@ public class MemberControllerTest {
     @Autowired
     MemberRepository memberRepository;
 
-//    @InjectMocks
-//    private MemberController controller;
-//
-//    @Before
-//    public void setup(){
-//        applicationContext.registerSingleton("exceptionHandler", ExceptionHandleController.class);
-//        webMvcConfigurationSupport.setApplicationContext(applicationContext);
-//
-//        mockMvc = MockMvcBuilders.standaloneSetup(controller)
-//                .setHandlerExceptionResolvers(webMvcConfigurationSupport.handlerExceptionResolver())
-//                .alwaysDo(print())
-//                .build();
-//    }
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     @Test
     @TestDescription("회원가입_아이디 중복 없을 때 성공 테스트")
     public void TestA() throws Exception {
         // Given
-        Member member = this.memberBuilder();
+        SignUpDto signUpDto=this.memberBuilder("kim.jin.young@gooroomee.com");
 
         // When & Then
         this.mockMvc.perform(post("/auth/signup")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(this.objectMapper.writeValueAsString(member)))
+                .content(this.objectMapper.writeValueAsString(signUpDto)))
                 .andExpect(status().isOk())
                 .andDo(print());
     }
@@ -69,17 +60,13 @@ public class MemberControllerTest {
     @TestDescription("회원가입_아이디 중복 있을 때 실패 테스트(다시하기)")
     public void TestB() throws Exception {
         // Given
-        Member existingEmail = Member.builder()
-                .email("jinyoung.kim@gooroomee.com")
-                .password("1234")
-                .name("KJY")
-                .build();
+        SignUpDto signUpDto=this.memberBuilder("kim.jin.young@gooroomee.com");
 
         // When & Then
         this.mockMvc.perform(post("/auth/signup")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(this.objectMapper.writeValueAsString(existingEmail)))
-                .andExpect(status().isOk())
+                .content(this.objectMapper.writeValueAsString(signUpDto)))
+                .andExpect(status().isBadRequest())
                 .andDo(print());
     }
 
@@ -88,7 +75,7 @@ public class MemberControllerTest {
     public void TestC() throws Exception {
         // Given
         SignInDto signInDto = SignInDto.builder()
-                .email("jinyoung.kim@gooroomee.com")
+                .email("kim.jin.young@gooroomee.com")
                 .password("1234")
                 .build();
 
@@ -101,13 +88,13 @@ public class MemberControllerTest {
     }
 
 
-    private Member memberBuilder() {
-        Member member = Member.builder()
-                .email("jinyoung.kim@gooroomee.com")
+    private SignUpDto memberBuilder(String email) {
+        SignUpDto signUpDto = SignUpDto.builder()
+                .email(email)
                 .password("1234")
                 .name("jinyoung.kim")
                 .build();
-        return member;
+        return signUpDto;
     }
 
 
