@@ -1,6 +1,7 @@
 package com.gooroomee.api.post;
 
 import com.gooroomee.api.board.Board;
+import com.gooroomee.api.common.CommonDateEntity;
 import com.gooroomee.api.member.Member;
 import lombok.*;
 
@@ -11,10 +12,10 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@EqualsAndHashCode(of="post_id")
+@EqualsAndHashCode(of="post_id", callSuper = false)
 @Entity
 @Table(name="t_post")
-public class Post {
+public class Post extends CommonDateEntity {
     @Id @GeneratedValue(strategy= GenerationType.IDENTITY)
     @Column(name="post_id")
     private Long post_id;
