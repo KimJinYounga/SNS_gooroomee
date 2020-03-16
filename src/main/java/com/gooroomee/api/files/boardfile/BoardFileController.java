@@ -27,9 +27,9 @@ public class BoardFileController {
         BoardFile boardFile=boardFileService.storeFile(file);
         String fileDownloadUri= ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/downloadFile/")
-                .path(boardFile.getId())
+                .path(boardFile.getFile_id())
                 .toUriString();
-        return new UploadFileResponse(boardFile.getFileName(), fileDownloadUri, file.getContentType(), file.getSize());
+        return new UploadFileResponse(boardFile.getFile_name(), fileDownloadUri, file.getContentType(), file.getSize());
     }
 
     @PostMapping("/uploadMultipleFiles")
@@ -43,9 +43,9 @@ public class BoardFileController {
     @GetMapping("/downloadFile/{fileId}")
     public ResponseEntity<Resource> downloadFile(@PathVariable String fileId, HttpServletResponse response){
         BoardFile boardFile=boardFileService.getFile(fileId);
-        return ResponseEntity.ok().contentType(MediaType.parseMediaType(boardFile.getFileType()))
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment: filename=\""+boardFile.getFileName()+"\"")
-                .body(new ByteArrayResource(boardFile.getData()));
+        return ResponseEntity.ok().contentType(MediaType.parseMediaType(boardFile.getFile_type()))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment: filename=\""+boardFile.getFile_name()+"\"")
+                .body(new ByteArrayResource(boardFile.getFile_data()));
 
     }
 

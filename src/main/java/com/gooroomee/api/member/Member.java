@@ -1,5 +1,6 @@
 package com.gooroomee.api.member;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -16,17 +17,16 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-//@Setter
-@EqualsAndHashCode(of="memberId")
+@EqualsAndHashCode(of="member_id")
 @Entity
-@Table(name="member",
+@Table(name="t_member",
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = {"email"}, name = "email_unique")})
 public class Member implements UserDetails {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
-    @Column(name="memberId")
-    private Long memberId;
+    @Column(name="member_id")
+    private Long member_id;
 
     @Column(name="email", unique = true)
     @Setter
