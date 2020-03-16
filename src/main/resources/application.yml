@@ -41,4 +41,4 @@ logging:
         type:
           descriptor:
             sql:
-              BasicBinder: TRACE
+              BasicBinder: TRACE # 바인드 파라미터 출력
