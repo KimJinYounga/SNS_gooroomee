@@ -16,7 +16,7 @@ public class Board {
     @Column(name="board_id")
     private Long board_id;
 
-    @Column(name="board_type", nullable = false, length=100)
+    @Column(name="board_type", nullable = false, length=50)
     @Setter
     private String boardType;
 }

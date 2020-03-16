@@ -27,16 +27,16 @@ public class Member extends CommonDateEntity implements UserDetails {
     @Column(name="member_id")
     private Long member_id;
 
-    @Column(name="email", unique = true)
+    @Column(name="email", unique = true, length = 50)
     @Setter
     private String email;
 
-    @Column(name="name")
+    @Column(name="name", length = 50)
     @Setter
     private String name;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @Column(name="password")
+    @Column(name="password", length = 100)
     @Setter
     private String password;
 
