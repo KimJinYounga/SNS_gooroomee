@@ -1,4 +1,4 @@
-package com.gooroomee.api.files.boardfile;
+package com.gooroomee.api.files.postfile;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ByteArrayResource;
@@ -18,18 +18,18 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
-public class BoardFileController {
+public class PostFileController {
 
-    private final BoardFileService boardFileService;
+    private final PostFileService postFileService;
 
     @PostMapping("/uploadFile")
     public UploadFileResponse uploadFile(@RequestParam("file") MultipartFile file){
-        BoardFile boardFile=boardFileService.storeFile(file);
+        PostFile postFile = postFileService.storeFile(file);
         String fileDownloadUri= ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/downloadFile/")
-                .path(boardFile.getFile_id())
+                .path(postFile.getFile_id())
                 .toUriString();
-        return new UploadFileResponse(boardFile.getFile_name(), fileDownloadUri, file.getContentType(), file.getSize());
+        return new UploadFileResponse(postFile.getFile_name(), fileDownloadUri, file.getContentType(), file.getSize());
     }
 
     @PostMapping("/uploadMultipleFiles")
@@ -42,10 +42,10 @@ public class BoardFileController {
 
     @GetMapping("/downloadFile/{fileId}")
     public ResponseEntity<Resource> downloadFile(@PathVariable String fileId, HttpServletResponse response){
-        BoardFile boardFile=boardFileService.getFile(fileId);
-        return ResponseEntity.ok().contentType(MediaType.parseMediaType(boardFile.getFile_type()))
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment: filename=\""+boardFile.getFile_name()+"\"")
-                .body(new ByteArrayResource(boardFile.getFile_data()));
+        PostFile postFile = postFileService.getFile(fileId);
+        return ResponseEntity.ok().contentType(MediaType.parseMediaType(postFile.getFile_type()))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment: filename=\""+ postFile.getFile_name()+"\"")
+                .body(new ByteArrayResource(postFile.getFile_data()));
 
     }
 

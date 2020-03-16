@@ -1,4 +1,4 @@
-package com.gooroomee.api.files.boardfile;
+package com.gooroomee.api.files.postfile;
 
 import lombok.Getter;
 import lombok.Setter;
