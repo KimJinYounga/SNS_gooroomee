@@ -114,13 +114,11 @@ public class PostDetailControllerTest {
                 .title("게시판 제목 입니다! ")
                 .email(signInDto.getEmail())
                 .content(signInDto.getEmail()+"의 게시판 내용")
-                .reg_date(LocalDateTime.now())
                 .build();
         PostDetailDto postDetailDto1 = PostDetailDto.builder()
                 .title("게시판 제목 입니다! ")
                 .email(signInDto1.getEmail())
                 .content(signInDto1.getEmail()+"의 게시판 내용")
-                .reg_date(LocalDateTime.now())
                 .build();
 
         mockMvc.perform(post("/post/free")
@@ -164,7 +162,6 @@ public class PostDetailControllerTest {
         Post post = optionalPost.get();
         PostDetailDto postDetailDto = PostDetailDto.builder()
                 .title("수정한 제목임")
-                .reg_date(post.getReg_date())
                 .content(post.getContent())
                 .email(post.getEmail())
                 .build();

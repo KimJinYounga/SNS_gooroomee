@@ -2,10 +2,9 @@ package com.gooroomee.api.post.detail;
 
 import com.gooroomee.api.board.Board;
 import com.gooroomee.api.board.BoardRepository;
-import com.gooroomee.api.board.BoardType;
 import com.gooroomee.api.error.exception.BoardNotFoundException;
-import com.gooroomee.api.error.exception.PostNotFoundException;
 import com.gooroomee.api.error.exception.MemberNotFoundException;
+import com.gooroomee.api.error.exception.PostNotFoundException;
 import com.gooroomee.api.member.MemberRepository;
 import com.gooroomee.api.post.Post;
 import com.gooroomee.api.post.PostRepository;

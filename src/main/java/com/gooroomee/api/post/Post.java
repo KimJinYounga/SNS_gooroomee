@@ -6,7 +6,6 @@ import com.gooroomee.api.member.Member;
 import lombok.*;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Builder
 @AllArgsConstructor
@@ -28,9 +27,6 @@ public class Post extends CommonDateEntity {
     @Setter
     private String content;
 
-    @Column(name="reg_date")
-    @Setter
-    private LocalDateTime reg_date;
 
     @Column(name="email", length = 50)
     @Setter

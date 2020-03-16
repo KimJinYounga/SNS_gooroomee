@@ -1,7 +1,6 @@
 package com.gooroomee.api.post.detail;
 
 import com.gooroomee.api.board.BoardRepository;
-import com.gooroomee.api.board.BoardType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

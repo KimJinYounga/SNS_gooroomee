@@ -1,7 +1,6 @@
 package com.gooroomee.api.board;
 
 import lombok.*;
-
 import javax.persistence.*;
 
 @Builder
@@ -17,7 +16,7 @@ public class Board {
     @Column(name="board_id")
     private Long board_id;
 
-    @Column(name="board_type")
+    @Column(name="board_type", nullable = false, length=100)
     @Setter
     private String boardType;
 }

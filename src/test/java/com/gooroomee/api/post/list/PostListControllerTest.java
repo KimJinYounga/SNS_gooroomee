@@ -132,7 +132,6 @@ public class PostListControllerTest {
     private PostDetailDto generatePosts(int index, SignUpDto signUpDto) {
         PostDetailDto postList = PostDetailDto.builder()
                 .title("글 제목 "+index)
-                .reg_date(LocalDateTime.now())
                 .content("글 상세 정보 입니다 "+index*10)
                 .email(signUpDto.getEmail())
                 .build();
