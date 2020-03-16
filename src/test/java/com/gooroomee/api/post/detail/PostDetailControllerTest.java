@@ -1,13 +1,15 @@
-package com.gooroomee.api.board.detail;
+package com.gooroomee.api.post.detail;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gooroomee.api.board.Board;
 import com.gooroomee.api.board.BoardRepository;
+import com.gooroomee.api.board.BoardType;
 import com.gooroomee.api.common.TestDescription;
-import com.gooroomee.api.member.Member;
 import com.gooroomee.api.member.MemberRepository;
 import com.gooroomee.api.member.security.SignInDto;
 import com.gooroomee.api.member.security.SignUpDto;
+import com.gooroomee.api.post.Post;
+import com.gooroomee.api.post.PostRepository;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,15 +37,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class boardDetailControllerTest {
+public class PostDetailControllerTest {
     @Autowired
     MockMvc mockMvc;
 
     @Autowired
-    BoardRepository boardRepository;
+    PostRepository postRepository;
 
     @Autowired
     MemberRepository memberRepository;
+
+    @Autowired
+    BoardRepository boardRepository;
 
     @Autowired
     ObjectMapper objectMapper;
@@ -52,9 +57,32 @@ public class boardDetailControllerTest {
     ModelMapper modelMapper;
 
     @Test
+    @TestDescription("게시판 생성")
+    @WithMockUser(username = "jinyoung.kim@gooroomee.com")
+    public void Tesa() throws Exception{
+        Board free=Board.builder()
+                .boardType(BoardType.free.toString())
+                .build();
+        Board QnA=Board.builder()
+                .boardType(BoardType.QnA.toString())
+                .build();
+        Board FAQ=Board.builder()
+                .boardType(BoardType.FAQ.toString())
+                .build();
+        Board notice=Board.builder()
+                .boardType(BoardType.notice.toString())
+                .build();
+        boardRepository.save(free);
+        boardRepository.save(QnA);
+        boardRepository.save(FAQ);
+        boardRepository.save(notice);
+    }
+
+    @Test
     @TestDescription("글 생성 성공")
     @WithMockUser(username = "jinyoung.kim@gooroomee.com")
     public void Test() throws Exception {
+
         SignUpDto signUpDto=this.generateMember("jinyoung.kim@gooroomee.com");
         SignInDto signInDto=SignInDto.builder()
                 .email("jinyoung.kim@gooroomee.com")
@@ -82,28 +110,26 @@ public class boardDetailControllerTest {
         String token1 = results1.andReturn().getResponse().getHeader("token");
 
 
-        BoardDetailDto boardDetailDto = BoardDetailDto.builder()
+        PostDetailDto postDetailDto = PostDetailDto.builder()
                 .title("게시판 제목 입니다! ")
                 .email(signInDto.getEmail())
                 .content(signInDto.getEmail()+"의 게시판 내용")
-                .reg_date(LocalDateTime.now())
                 .build();
-        BoardDetailDto boardDetailDto1 = BoardDetailDto.builder()
+        PostDetailDto postDetailDto1 = PostDetailDto.builder()
                 .title("게시판 제목 입니다! ")
                 .email(signInDto1.getEmail())
                 .content(signInDto1.getEmail()+"의 게시판 내용")
-                .reg_date(LocalDateTime.now())
                 .build();
 
-        mockMvc.perform(post("/board")
+        mockMvc.perform(post("/post/free")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(this.objectMapper.writeValueAsString(boardDetailDto))
+                .content(this.objectMapper.writeValueAsString(postDetailDto))
                 .header("X-AUTH-TOKEN", token))
                 .andExpect(status().isOk())
                 .andDo(print());
-        mockMvc.perform(post("/board")
+        mockMvc.perform(post("/post/free")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(this.objectMapper.writeValueAsString(boardDetailDto1))
+                .content(this.objectMapper.writeValueAsString(postDetailDto1))
                 .header("X-AUTH-TOKEN", token1))
                 .andExpect(status().isOk())
                 .andDo(print());
@@ -118,7 +144,7 @@ public class boardDetailControllerTest {
         // Given
 
         // When & Then
-        this.mockMvc.perform(get("/board/1")
+        this.mockMvc.perform(get("/post/1")
                 .param("page", "0")
                 .param("size", "10")
         )
@@ -132,18 +158,17 @@ public class boardDetailControllerTest {
     @WithMockUser(username = "jinyoung.kim@gooroomee.com")
     public void TestC() throws Exception {
         // Given
-        Optional<Board> optionalBoard = this.boardRepository.findById(Long.valueOf(1));
-        Board board = optionalBoard.get();
-        BoardDetailDto boardDetailDto = BoardDetailDto.builder()
+        Optional<Post> optionalPost = this.postRepository.findById(Long.valueOf(1));
+        Post post = optionalPost.get();
+        PostDetailDto postDetailDto = PostDetailDto.builder()
                 .title("수정한 제목임")
-                .reg_date(board.getReg_date())
-                .content(board.getContent())
-                .email(board.getEmail())
+                .content(post.getContent())
+                .email(post.getEmail())
                 .build();
         // When & Then
-        this.mockMvc.perform(put("/board/1")
+        this.mockMvc.perform(put("/post/1")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(this.objectMapper.writeValueAsString(boardDetailDto)))
+                .content(this.objectMapper.writeValueAsString(postDetailDto)))
                 .andExpect(status().isOk())
                 .andDo(print());
 
@@ -152,8 +177,8 @@ public class boardDetailControllerTest {
     @Test
     @TestDescription("게시글 삭제 성공")
     @WithMockUser(username = "jinyoung.kim@gooroomee.com")
-    public void deleteBoardSuccess() throws Exception {
-        this.mockMvc.perform(delete("/board/1"))
+    public void deletePostSuccess() throws Exception {
+        this.mockMvc.perform(delete("/post/1"))
                 .andExpect(status().isNoContent())
                 .andDo(print());
     }
@@ -161,8 +186,8 @@ public class boardDetailControllerTest {
     @Test
     @TestDescription("게시글 삭제 실패")
     @WithMockUser(username = "jinyoung.kim@gooroomee.com")
-    public void deleteBoardFailed() throws Exception {
-        this.mockMvc.perform(delete("/board/40"))
+    public void deletePostFailed() throws Exception {
+        this.mockMvc.perform(delete("/post/40"))
                 .andExpect(status().isNotFound())
                 .andDo(print());
     }

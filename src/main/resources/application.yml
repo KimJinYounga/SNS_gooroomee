@@ -33,17 +33,6 @@ spring:
     secretKey: govlepel@$&amp;
 
 
-log:
-  slack:
-    enabled: true
-    webHookUrl: https://hooks.slack.com/services/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
-    channel: backend_logback
-  database:
-    enabled: true
-  level: ERROR
-
-
-
 logging:
   level:
     org:

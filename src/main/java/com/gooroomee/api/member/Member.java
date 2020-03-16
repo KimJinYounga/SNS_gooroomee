@@ -1,11 +1,11 @@
 package com.gooroomee.api.member;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.gooroomee.api.common.CommonDateEntity;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -16,17 +16,16 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-//@Setter
-@EqualsAndHashCode(of="memberId")
+@EqualsAndHashCode(of="member_id", callSuper = false)
 @Entity
-@Table(name="member",
+@Table(name="t_member",
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = {"email"}, name = "email_unique")})
-public class Member implements UserDetails {
+public class Member extends CommonDateEntity implements UserDetails {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
-    @Column(name="memberId")
-    private Long memberId;
+    @Column(name="member_id")
+    private Long member_id;
 
     @Column(name="email", unique = true)
     @Setter
