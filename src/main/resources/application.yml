@@ -30,7 +30,7 @@ spring:
       force: true
 
   jwt:
-    secretKey: govlepel@$&amp;
+    secret: govlepel@$&amp;
 
 
 logging:

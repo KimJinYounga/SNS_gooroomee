@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 @RequiredArgsConstructor
-public class JwtAuthenticationFilter extends GenericFilterBean{
+public class JwtAuthenticationFilter extends GenericFilterBean {
 
 
     private final JwtTokenProvider jwtTokenProvider;
@@ -21,9 +21,9 @@ public class JwtAuthenticationFilter extends GenericFilterBean{
     // request로 들어오는 jwt token의 유효성을 검증하는 filter를 filter chain에 등록
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        String token=jwtTokenProvider.resolveToken((HttpServletRequest) request);
-        if (token != null&&jwtTokenProvider.validateToken(token)){
-            Authentication auth=jwtTokenProvider.getAuthentication(token);
+        String token = jwtTokenProvider.resolveToken((HttpServletRequest) request);
+        if (jwtTokenProvider.validateToken(token)) {
+            Authentication auth = jwtTokenProvider.getAuthentication(token);
             SecurityContextHolder.getContext().setAuthentication(auth);
         }
         chain.doFilter(request, response);
