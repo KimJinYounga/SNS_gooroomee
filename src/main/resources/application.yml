@@ -29,24 +29,8 @@ spring:
       enabled: true
       force: true
 
-jwt:
-  secretKey: govlepel@$&amp;
-
-
-log:
-  slack:
-    enabled: true
-    webHookUrl: https://hooks.slack.com/services/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
-    channel: backend_logback
-  database:
-    enabled: true
-  level: ERROR
-
-
-file:
-  upload-dir: ./files
-  projectimage-dir: ./files/projectimg
-  profileimage-dir: ./files/profileimg
+  jwt:
+    secretKey: govlepel@$&amp;
 
 
 logging:
@@ -57,4 +41,4 @@ logging:
         type:
           descriptor:
             sql:
-              BasicBinder: TRACE
+              BasicBinder: TRACE # 바인드 파라미터 출력

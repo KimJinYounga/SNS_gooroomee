@@ -1,38 +1,22 @@
 package com.gooroomee.api.board;
 
-import com.gooroomee.api.user.User;
 import lombok.*;
-
 import javax.persistence.*;
-import java.util.Date;
 
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
-@Setter
-@EqualsAndHashCode(of="boardId")
+@EqualsAndHashCode(of="board_id")
 @Entity
-@Table(name="board")
+@Table(name="t_board")
 public class Board {
-    @Id @GeneratedValue(strategy= GenerationType.IDENTITY)
-    @Column(name="boardId")
-    private long boardId;
+    @Id
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @Column(name="board_id")
+    private Long board_id;
 
-    @Column(name="title")
-    private String title;
-
-    @Column(name="contents")
-    private String contents;
-
-    @Column(name="date")
-    private Date date;
-
-    @Column(name="email")
-    private String email;
-
-    @ManyToOne
-    @JoinColumn(name = "userId")
-    private User user;
-
+    @Column(name="board_type", nullable = false, length=50)
+    @Setter
+    private String boardType;
 }
