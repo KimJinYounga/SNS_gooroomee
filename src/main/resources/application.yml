@@ -32,7 +32,6 @@ spring:
   jwt:
     secretKey: govlepel@$&amp;
 
-
 logging:
   level:
     org:
