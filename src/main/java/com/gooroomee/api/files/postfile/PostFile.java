@@ -1,15 +1,17 @@
 package com.gooroomee.api.files.postfile;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 
+@Builder
 @Entity
 @Table(name="t_board_file")
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class PostFile {
     @Id
     @GeneratedValue(generator="uuid")
@@ -17,13 +19,6 @@ public class PostFile {
     private String file_id;
     private String file_name;
     private String file_type;
-    @Lob // mysql -> LONGBLOB
-    private byte[] file_data;
-    public PostFile(){}
-    public PostFile(String file_name, String file_type, byte[] file_data){
-        this.file_name=file_name;
-        this.file_type=file_type;
-        this.file_data=file_data;
-    }
+    private String file_url;
 
 }
