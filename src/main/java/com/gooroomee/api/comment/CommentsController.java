@@ -1,5 +1,7 @@
 package com.gooroomee.api.comment;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gooroomee.api.post.detail.PostDetailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @Controller
 @Slf4j
@@ -31,6 +34,14 @@ public class CommentsController {
         String visitorId = authentication.getName();
         this.commentsService.storeComments(visitorId, post_id, commentsDto, parentId);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/{post_id}")
+    public ResponseEntity getComments(@PathVariable Long post_id) throws JsonProcessingException {
+        List<CommentsDto> commentsDto = this.commentsService.getComments(post_id);
+        String comments = new ObjectMapper().writeValueAsString(commentsDto);
+        System.out.println(comments);
+        return ResponseEntity.ok().body(commentsDto);
     }
 
 }

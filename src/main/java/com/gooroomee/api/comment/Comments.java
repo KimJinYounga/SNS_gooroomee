@@ -1,10 +1,11 @@
 package com.gooroomee.api.comment;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.gooroomee.api.common.CommonDateEntity;
 import com.gooroomee.api.member.Member;
 import com.gooroomee.api.post.Post;
 import lombok.*;
-
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,16 +27,17 @@ public class Comments extends CommonDateEntity {
     @Setter
     private String comments;
     @Setter
-    private Boolean isDeleted;
+    private Boolean isDeleted = Boolean.FALSE;
     @Setter
     private Boolean isSecret = Boolean.FALSE;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parents_id")
-    @Setter
+    @JsonBackReference
     private Comments parent;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "parent")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "parent")
+    @JsonManagedReference
     private List<Comments> children = new ArrayList<Comments>();
 
     @ManyToOne
@@ -47,5 +49,12 @@ public class Comments extends CommonDateEntity {
     @JoinColumn(name = "post_id")
     @Setter
     private Post post;
+
+    public void setParent(Comments parent) {
+        this.parent = parent;
+        if (!parent.getChildren().contains(this)) {
+            parent.getChildren().add(this);
+        }
+    }
 
 }

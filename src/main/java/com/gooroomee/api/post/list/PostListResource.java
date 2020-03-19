@@ -7,6 +7,6 @@ import org.springframework.hateoas.Link;
 public class PostListResource extends EntityModel<Post> {
     public PostListResource(Post post, Link... links) {
         super(post, links);
-        add(new Link("/post/"+post.getPost_id()).withSelfRel());
+        add(new Link("/post/"+post.getPostId()).withSelfRel());
     }
 }

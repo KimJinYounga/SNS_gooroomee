@@ -8,9 +8,11 @@ import com.gooroomee.api.post.Post;
 import com.gooroomee.api.post.PostRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
-
 import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -20,6 +22,7 @@ public class CommentsService {
     private final CommentsRepository commentsRepository;
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
+    private final ModelMapper modelMapper;
 
     @Transactional
     public void storeComments(String visitor_id, Long post_id, CommentsDto commentsDto, Long parentId) {
@@ -43,7 +46,15 @@ public class CommentsService {
         this.commentsRepository.save(comments);
     }
 
+    public List<CommentsDto> getComments(Long post_id) {
+        List<Comments> comments = commentsRepository.findCommentsByParentAndPost_PostId(null, post_id);
 
+        List<CommentsDto> commentsDtos = new ArrayList<CommentsDto>();
+        for (Comments dto : comments) {
+            commentsDtos.add(this.modelMapper.map(dto, CommentsDto.class));
+        }
+        return commentsDtos;
+    }
 }
 
 
