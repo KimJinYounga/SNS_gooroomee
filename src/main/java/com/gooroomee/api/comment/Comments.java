@@ -1,7 +1,5 @@
 package com.gooroomee.api.comment;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.gooroomee.api.common.CommonDateEntity;
 import com.gooroomee.api.member.Member;
 import com.gooroomee.api.post.Post;
@@ -33,11 +31,9 @@ public class Comments extends CommonDateEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parents_id")
-    @JsonBackReference
     private Comments parent;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "parent")
-    @JsonManagedReference
     private List<Comments> children = new ArrayList<Comments>();
 
     @ManyToOne
