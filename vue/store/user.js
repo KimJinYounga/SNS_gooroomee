@@ -3,6 +3,8 @@ vuex module
  */
 export const state = () => ({
     me:null,
+    followerList:[],
+    followingList:[],
 });
 // state를 mutations를 통해 바꾼다.(비동기 작업은 mutation에서 할 수 없음,, 단순한 동기적 작업만 가능)
 // mutations는 commit 으로 실행
@@ -10,12 +12,15 @@ export const mutations = {
     setMe(state, payload) {
         state.me = payload;
     },
+    changeEmail(state, payload){
+        state.me.email = payload.email;
+    }
 };
 // 비동기 작업을 위한 actions(복잡한 작업할때 사용)
 export const actions = {
     signUp({commit, state}, payload) {
         // 서버에 회원가입 요청을 보내는 부분
-        let {data} = this.$axios.post('http://localhost:8080/signup', {
+        let {data} = this.$axios.post('http://localhost:8080/auth/signup', {
             email:payload.email,
             name:payload.name,
             password:payload.password,
@@ -31,7 +36,7 @@ export const actions = {
 
     },
     logIn({commit}, payload) {
-        this.$axios.post('http://localhost:8080/signin', {
+        this.$axios.post('http://localhost:8080/auth/signin', {
             email:payload.email,
             password:payload.password,
         }).then((data) => {
@@ -44,4 +49,7 @@ export const actions = {
     logOut({commit}, payload) {
         commit('setMe', null)
     },
+    changeEmail({commit}, payload) {
+        commit('changeEmail', payload);
+    }
 };
