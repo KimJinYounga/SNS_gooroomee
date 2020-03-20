@@ -34,8 +34,8 @@ public class JwtTokenProvider {
     }
 
     // Jwt 토큰 생성
-    public String createToken(String userPk, List<String> roles){
-        Claims claims= Jwts.claims().setSubject(userPk);
+    public String createToken(String userId, List<String> roles){
+        Claims claims= Jwts.claims().setSubject(userId);
         claims.put("roles", roles);
         Date now=new Date();
         return Jwts.builder()
@@ -64,6 +64,9 @@ public class JwtTokenProvider {
 
     // Jwt 토큰의 유효성+만료일자 확인
     public boolean validateToken(String jwtToken){
+        if(jwtToken == null){
+            return false;
+        }
         try{
             Jws<Claims> claims=Jwts.parser().setSigningKey(secretKey).parseClaimsJws(jwtToken);
             return !claims.getBody().getExpiration().before(new Date());
