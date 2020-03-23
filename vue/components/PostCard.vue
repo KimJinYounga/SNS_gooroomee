@@ -4,7 +4,7 @@
             <v-image/>
             <v-card-text>
                 <div>
-                    <h3>{{ post.User.nickname }}</h3>
+<!--                    <h3>{{ post.User.email }}</h3>-->
                     <nuxt-link :to="'/post/' + post.id">{{ post.content }}</nuxt-link>
                 </div>
             </v-card-text>
@@ -54,7 +54,7 @@
         components: {CommentForm},
         props: {
             post: {
-                type: Object,
+                // type: Object,
                 required: true,
             },
         },

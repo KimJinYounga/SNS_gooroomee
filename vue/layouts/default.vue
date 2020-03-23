@@ -37,7 +37,7 @@
         },
         computed: {
             name() {
-                return this.$store.state.posts.name;
+                return this.$store.state.posts.email;
             },
         },
         methods: {

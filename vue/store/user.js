@@ -3,6 +3,7 @@ vuex module
  */
 export const state = () => ({
     me:null,
+    accessToken:null,
     followerList:[],
     followingList:[],
 });

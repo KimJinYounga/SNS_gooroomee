@@ -33,6 +33,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                     .authorizeRequests() // 사용권한 체크
                         .antMatchers("/auth/signin", "/auth/signup").permitAll() // 가입 및 로그인은 누구나 접근가능
                         .antMatchers(HttpMethod.GET, "/**").permitAll()
+                        .antMatchers(HttpMethod.POST, "/**").permitAll()
                         .anyRequest().hasRole("USER") // 그외 나머지 요청은 모두 인증된 회원만 접근가능
                 .and()
                     .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);

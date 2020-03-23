@@ -2,6 +2,11 @@
     <v-card style="margin-bottom: 20px">
         <v-container>
             <v-form ref="form" v-model="valid" @submit.prevent="onSubmitForm">
+                <v-text-field
+                        v-model="title"
+                        label="제목"
+                        type="text"
+                />
                 <v-textarea
                         v-model="content"
                         outlined
@@ -15,7 +20,8 @@
                         @input="onChangeTextarea"
                 />
                 <v-btn type="submit" color="green" absolute right>짹짹</v-btn>
-                <v-btn>이미지 업로드</v-btn>
+                <input ref="imageInput" type="file" multiple hidden @change="onChangeImages">
+                <v-btn @click="onClickImageUpload" type="button">이미지 업로드</v-btn>
             </v-form>
 
         </v-container>
@@ -34,6 +40,7 @@
                 successMessages: '',
                 success: false,
                 content: '',
+                title:'',
             }
         },
         computed: {
@@ -51,17 +58,19 @@
                 if (this.$refs.form.validate()) {
                     this.$store.dispatch('posts/add', {
                         content: this.content,
-                        User: {
-                            nickname: this.me.email,
-
-                        },
-                        Comments: [],
-                        Images: [],
-                        id: Date.now(),
-                        createdAtL: Date.now(),
+                        email:this.me.email,
+                        title:this.title,
+                        // User: {
+                        //     email: this.me.email,
+                        // },
+                        // Comments: [],
+                        // Images: [],
+                        // id: Date.now(),
+                        // createdAtL: Date.now(),
                     })
                         .then(() => {
                             this.content = '';
+                            this.title = '';
                             this.hideDetails = false;
                             this.success = true;
                             this.successMessages = '게시글 등록 성공!';
@@ -73,8 +82,19 @@
                 }
 
             },
-        }
-    }
+            onClickImageUpload() {
+                this.$refs.imageInput.click();
+            },
+            onChangeImages(e) {
+                console.log(e.target.files);
+                const imageFormData = new FormData();
+                [].forEach.call(e.target.files, (f) => {
+                    imageFormData.append('file', f);
+                });
+                this.$store.dispatch('posts/uploadImages', imageFormData);
+            },
+        },
+    };
 </script>
 
 <style scoped>

@@ -38,9 +38,9 @@ public class PostDetailController {
     public ResponseEntity createPost(@RequestBody @Valid PostDetailDto postDetailDto,
                                      @PathVariable(name = "board_type") String boardType,
                                      Errors errors) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null)
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        if (authentication == null)
+//            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         try {
             this.postDetailService.storePost(postDetailDto, boardType);
             return ResponseEntity.ok().build();

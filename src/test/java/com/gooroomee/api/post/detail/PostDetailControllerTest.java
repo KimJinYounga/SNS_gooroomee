@@ -94,7 +94,7 @@ public class PostDetailControllerTest {
         ResultActions results = this.mockMvc.perform(RestDocumentationRequestBuilders.post("/auth/signin")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(this.objectMapper.writeValueAsBytes(signInDto)));
-        String token = results.andReturn().getResponse().getHeader("token");
+        String token = results.andReturn().getResponse().getHeader("authtoken");
 
         SignUpDto signUpDto1=this.generateMember("rlawlsdud419@gooroomee.com");
         SignInDto signInDto1=SignInDto.builder()
@@ -107,7 +107,7 @@ public class PostDetailControllerTest {
         ResultActions results1 = this.mockMvc.perform(RestDocumentationRequestBuilders.post("/auth/signin")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(this.objectMapper.writeValueAsBytes(signInDto1)));
-        String token1 = results1.andReturn().getResponse().getHeader("token");
+        String token1 = results1.andReturn().getResponse().getHeader("authtoken");
 
 
         PostDetailDto postDetailDto = PostDetailDto.builder()
@@ -124,13 +124,13 @@ public class PostDetailControllerTest {
         mockMvc.perform(post("/post/free")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(this.objectMapper.writeValueAsString(postDetailDto))
-                .header("X-AUTH-TOKEN", token))
+                .header("authtoken", token))
                 .andExpect(status().isOk())
                 .andDo(print());
         mockMvc.perform(post("/post/free")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(this.objectMapper.writeValueAsString(postDetailDto1))
-                .header("X-AUTH-TOKEN", token1))
+                .header("authtoken", token1))
                 .andExpect(status().isOk())
                 .andDo(print());
 
