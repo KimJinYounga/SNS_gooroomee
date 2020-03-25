@@ -4,25 +4,22 @@
 <!--            <v-image/>-->
             <v-card-text>
                 <div>
-                    <nuxt-link :to="'/post/' + post.postId">
-                        <v-list-item>
-                            <v-list-item-avatar color="teal">
-                                <span>{{ post.email[0] }}</span>
-                            </v-list-item-avatar>
-                            <v-list-item-content>
-                                <v-list-item-title>{{ post.email }}</v-list-item-title>
-                                <v-list-item-subtitle>{{ post.createdAt}}</v-list-item-subtitle>
-                            </v-list-item-content>
-                        </v-list-item>
-                        <v-list-item>
-                            <p> {{ post.title }}</p>
-                        </v-list-item>
-                    </nuxt-link>
+                    <v-list-item>
+                        <v-list-item-avatar color="teal">
+                            <span>{{ post.email[0] }}</span>
+                        </v-list-item-avatar>
+                        <v-list-item-content>
+                            <v-list-item-title>{{ post.email }}</v-list-item-title>
+                            <v-list-item-subtitle>{{ post.createdAt}}</v-list-item-subtitle>
+                        </v-list-item-content>
+                    </v-list-item>
+                    <v-list-item>
+                        <v-list-item-content>
+                            <v-list-item-title>{{ post.title }}</v-list-item-title><br /><br />
+                            <v-list-item-subtitle> {{ post.content }}</v-list-item-subtitle>
+                        </v-list-item-content>
+                    </v-list-item>
                 </div>
-                <!--                <div>-->
-                <!--                    <h3>{{ post.email }}</h3>-->
-                <!--                    <nuxt-link :to="'/post/' + post.postId">{{ post.content }}</nuxt-link>-->
-                <!--                </div>-->
             </v-card-text>
             <v-card-actions>
                 <v-btn text color="orange">
@@ -97,9 +94,5 @@
     }
 </script>
 
-<style scoped>
-    a {
-        color: inherit;
-        text-decoration: none;
-    }
+<style>
 </style>

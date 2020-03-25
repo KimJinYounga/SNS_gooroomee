@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*")
 public class PostFileController {
 
     private final PostFileService postFileService;

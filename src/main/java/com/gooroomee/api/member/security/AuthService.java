@@ -53,4 +53,11 @@ public class AuthService {
         member.setPassword("");
         memberRepository.save(member);
     }
+
+    @Transactional
+    public Member getMember(String visitorId) {
+        System.out.println("visitorID"+ visitorId);
+        Member member = memberRepository.findByEmail(visitorId).orElseThrow(MemberNotFoundException::new);
+        return member;
+    }
 }

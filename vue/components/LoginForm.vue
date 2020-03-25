@@ -1,5 +1,5 @@
 <template>
-    <v-container v-if="!me">
+    <v-container v-if="!authtoken">
         <v-card>
             <v-form ref="form" v-model="valid" @submit.prevent="onSubmitForm">
                 <v-container>
@@ -25,7 +25,7 @@
     </v-container>
     <v-container v-else>
         <v-card>
-            {{me.email}}님 로그인되었습니다.
+            {{ me }}님 로그인되었습니다.
             <v-btn @click="onLogOut">로그아웃</v-btn>
         </v-card>
     </v-container>
@@ -48,6 +48,9 @@
             };
         },
         computed: {
+            authtoken() {
+                return this.$store.state.user.authtoken;
+            },
             me() {
                 return this.$store.state.user.me;
             },
