@@ -58,15 +58,12 @@
                 if (this.$refs.form.validate()) {
                     this.$store.dispatch('posts/add', {
                         content: this.content,
-                        email:this.me.email,
+                        email:this.me,
                         title:this.title,
-                        // User: {
-                        //     email: this.me.email,
-                        // },
-                        // Comments: [],
-                        // Images: [],
-                        // id: Date.now(),
-                        // createdAtL: Date.now(),
+                        User: {
+                            email: this.me,
+                        },
+                        Comments: [],
                     })
                         .then(() => {
                             this.content = '';

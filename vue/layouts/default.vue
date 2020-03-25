@@ -35,16 +35,16 @@
         components: {
             LoginForm,
         },
+        fetch( {store} ) {
+            // return store.dispatch('user/getMemberInfo');
+        },
+
         computed: {
             name() {
                 return this.$store.state.posts.email;
             },
         },
         methods: {
-            onChangeName() {
-                this.$store.commit('posts/BYE')
-
-            }
         }
     };
 </script>

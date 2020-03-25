@@ -1,8 +1,9 @@
 <template>
     <v-container>
-        <post-form v-if="me"/>
+
+        <post-form v-if="authtoken"/>
         <div>
-            <post-card v-for="p in mainPosts" :key="p.id" :post="p"/>
+            <post-card v-for="p in mainPosts" :key="p.postId" :post="p"/>
         </div>
     </v-container>
 </template>
@@ -22,7 +23,11 @@
                 name: 'Nuxt.js',
             };
         },
+
         computed: {
+            authtoken() {
+                return this.$store.state.user.authtoken;
+            },
             me() {
                 return this.$store.state.user.me;
             },
@@ -34,8 +39,10 @@
             }
         },
         fetch({store}) { // 처음 시작할 때 데이터를 넣어줌
-            store.dispatch('posts/loadPosts'); // 화면이 뜨기 전에 미리 게시글 10개를 서버에서 로딩함
+            console.log("1. postsfetch");
+            return store.dispatch('posts/loadPosts'); // 화면이 뜨기 전에 미리 게시글 10개를 서버에서 로딩함
         },
+
         mounted() {
             window.addEventListener('scroll', this.onScroll);
         },
