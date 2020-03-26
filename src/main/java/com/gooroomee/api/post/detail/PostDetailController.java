@@ -1,6 +1,7 @@
 package com.gooroomee.api.post.detail;
 
 import com.gooroomee.api.board.BoardRepository;
+import com.gooroomee.api.error.exception.BoardNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -24,6 +25,16 @@ public class PostDetailController {
     private final PostDetailService postDetailService;
 
     private final BoardRepository boardRepository;
+
+    @RequestMapping(value = "/test", method = RequestMethod.POST)
+    public String responseFail2(
+            @RequestParam(required = false) String value1,
+            @RequestParam(required = false) String value2) {
+        if (value1 == null || value1.equals("")) {
+            throw new IllegalArgumentException("value is null");
+        }
+        return "fail";
+    }
 
     @GetMapping(value = "/{post_id}")
     public ResponseEntity getPostDetail(@PathVariable(name = "post_id") Long post_id) {
