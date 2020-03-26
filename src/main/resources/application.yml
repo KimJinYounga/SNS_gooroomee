@@ -32,6 +32,15 @@ spring:
   jwt:
     secret: govlepel@$&amp;
 
+log:
+  slack:
+    enabled: true
+    webHookUrl: https://hooks.slack.com/services/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
+    channel: gooroomee
+  database:
+    enabled: true
+  level: ERROR
+
 logging:
   level:
     org:
