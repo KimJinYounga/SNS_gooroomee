@@ -11,7 +11,7 @@ spring:
     show-sql: true
     hibernate:
       format_sql: true
-#      ddl-auto: create
+      ddl-auto: create
 
   jackson:
     deserialization:
@@ -28,6 +28,14 @@ spring:
       charset: UTF-8
       enabled: true
       force: true
+
+  devtools:
+    livereload:
+      enabled: true
+    restart:
+      enabled: false
+    freemarker:
+      cache: false
 
   jwt:
     secret: govlepel@$&amp;
