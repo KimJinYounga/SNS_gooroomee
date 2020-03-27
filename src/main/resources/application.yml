@@ -29,16 +29,22 @@ spring:
       enabled: true
       force: true
 
+  freemarker:
+    suffix: .ftl
+    template-loader-path: classpath:/templates
   devtools:
     livereload:
       enabled: true
-    restart:
-      enabled: false
     freemarker:
       cache: false
+    restart:
+      enabled: false
 
   jwt:
     secret: govlepel@$&amp;
+
+  profiles:
+    active: local
 
 log:
   slack:
