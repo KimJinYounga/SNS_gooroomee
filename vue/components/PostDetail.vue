@@ -16,7 +16,7 @@
                     <v-list-item>
                         <v-list-item-content>
                             <v-list-item-title>{{ post.title }}</v-list-item-title><br /><br />
-                            <v-list-item-subtitle> {{ post.content }}</v-list-item-subtitle>
+                            <v-list-item-action-text> {{ post.content }}</v-list-item-action-text>
                         </v-list-item-content>
                     </v-list-item>
                 </div>

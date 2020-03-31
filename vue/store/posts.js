@@ -29,17 +29,17 @@ export const actions = {
     add({commit}, payload) {
         // 서버에 게시글 등록 요청 보냄
         this.$axios.post('http://localhost:8080/post/free', {
-            content: payload.content,
-            email: payload.email,
-            title: payload.title,
-        },
+                content: payload.content,
+                email: payload.email,
+                title: payload.title,
+            },
         )
             .then((res) => {
-                console.log("성공!!!!!!!!!"+res.data);
+                console.log("성공!!!!!!!!!" + res.data);
                 commit('addMainPost', payload);
             })
             .catch((e) => {
-                console.log("실패!!!!!!!!!"+e.getMessage);
+                console.log("실패!!!!!!!!!" + e.getMessage);
 
             });
     },
@@ -50,18 +50,12 @@ export const actions = {
         commit('addComment', payload);
     },
     loadPosts({commit, state}, payload) {
-        console.log("2. loadPosts 실행중");
         if (state.hasMorePost) {
-            console.log("3. loadPosts2 실행중");
-            this.$axios.get('http://localhost:8080/posts/free?size=5&sort=postId,DESC&page='+pagination)
+            return this.$axios.get('http://localhost:8080/posts/free?size=5&sort=postId,DESC&page=' + pagination)
                 .then((res) => {
-                    console.log("4. axios실행");
-                    pagination+=1;
+                    pagination += 1;
                     const Obj = JSON.stringify(res.data);
                     const respObj = JSON.parse(Obj);
-                    console.log("=====================");
-                    console.log(Obj);
-                    console.log(respObj._embedded.postList);
                     commit('loadPosts', respObj._embedded.postList);
                 })
                 .catch((err) => {
@@ -73,9 +67,9 @@ export const actions = {
     },
     uploadImages({commit}, payload) {
         this.$axios.post('http://localhost:8080/testUpload/1', {
-            fileName:payload.fileName,
-            fileType:payload.fileType,
-            fileUrl:payload.fileUrl,
+            fileName: payload.fileName,
+            fileType: payload.fileType,
+            fileUrl: payload.fileUrl,
         }, {
             withCredentials: true,
         })
