@@ -1,6 +1,7 @@
 export const state = () => ({
     mainPosts: [],
     hasMorePost: true,
+    Comments: [],
 });
 
 
@@ -11,11 +12,11 @@ export const mutations = {
         state.mainPosts.unshift(payload); //최신 게시글을 맨 앞에 보여줄 것이므로 push가 아닌 unshift
     },
     removeMainPost(state, payload) {
-        const index = state.mainPosts.findIndex(v => v.id === payload.id);
+        const index = state.mainPosts.findIndex(v => v.postId === payload.postId);
         state.mainPosts.splice(index, 1);
     },
     addComment(state, payload) {
-        const index = state.mainPosts.findIndex(v => v.id === payload.Id);
+        const index = state.mainPosts.findIndex(v => v.postId === `${payload.postId}`);
         state.mainPosts[index].Comments.push(payload);
     },
     loadPosts(state, payload) {
@@ -26,7 +27,7 @@ export const mutations = {
 };
 
 export const actions = {
-    add({commit}, payload) {
+    add({commit, dispatch}, payload) {
         // 서버에 게시글 등록 요청 보냄
         this.$axios.post('http://localhost:8080/post/free', {
                 content: payload.content,
@@ -35,8 +36,17 @@ export const actions = {
             },
         )
             .then((res) => {
-                console.log("성공!!!!!!!!!" + res.data);
-                commit('addMainPost', payload);
+                const Obj = JSON.stringify(res.data);
+                const respObj = JSON.parse(Obj);
+                console.log("성공!!!!!!!!!" + respObj.postId);
+                commit('addMainPost', {
+                    postId: respObj.postId,
+                    email: respObj.email,
+                    content: respObj.content,
+                    title: respObj.title,
+                    createdAt: respObj.createdAt,
+
+                })
             })
             .catch((e) => {
                 console.log("실패!!!!!!!!!" + e.getMessage);
@@ -44,7 +54,26 @@ export const actions = {
             });
     },
     remove({commit}, payload) {
-        commit('removeMainPost', payload);
+        if (localStorage.getItem("authtoken")) {
+            let token = localStorage.getItem("authtoken");
+            let config = {
+                headers: {
+                    "authtoken": token,
+                },
+            };
+            this.$axios.delete(`http://localhost:8080/post/${payload.postId}`, config)
+                .then((res) => {
+                        commit('removeMainPost', payload)
+                        console.log("delete 성공" + res.data)
+                    }
+                )
+                .catch((err) => {
+                    alert("글을 삭제할 수 없습니다.")
+                    console.log(`http://localhost:8080/post/${payload.postId}`)
+                })
+            ;
+
+        }
     },
     addComment({commit}, payload) {
         commit('addComment', payload);

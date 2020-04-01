@@ -35,13 +35,13 @@ public class PostDetailService {
     }
 
     @Transactional
-    public void storePost(PostDetailDto postDetailDto, String boardType) {
+    public Post storePost(PostDetailDto postDetailDto, String boardType) {
         Board board = this.boardRepository.findByBoardType(boardType).orElseThrow(BoardNotFoundException::new);
         Post post = new Post();
         postDetailDto.toEntity(post);
         post.setMember(this.memberRepository.findMemberByEmail(postDetailDto.getEmail()).orElseThrow(MemberNotFoundException::new));
         post.setBoard(board);
-        this.postRepository.save(post);
+        return this.postRepository.save(post);
     }
 
     @Transactional
@@ -54,8 +54,8 @@ public class PostDetailService {
     }
 
     @Transactional
-    public void deletePost(Long post_id) {
-        this.postRepository.findById(post_id).orElseThrow(PostNotFoundException::new);
+    public void deletePost(Long post_id, String visitorId) {
+        this.postRepository.findByPostIdAndMember_Email(post_id, visitorId).orElseThrow(PostNotFoundException::new);
         this.postRepository.deleteById(post_id);
     }
 }
