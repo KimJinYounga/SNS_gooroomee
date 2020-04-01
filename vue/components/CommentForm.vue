@@ -20,7 +20,7 @@
         name: "CommentForm",
         props:{
             postId:{
-                type:String,
+                type: Number,
                 required:true,
             },
         },
@@ -42,7 +42,7 @@
             onSubmitForm() {
                 if(this.$refs.form.validate()) {
                     this.$store.dispatch('posts/addComment', {
-                        id:Date.now(),
+                        // id:Date.now(),
                         postId:this.postId,
                         content:this.content,
                         User: {

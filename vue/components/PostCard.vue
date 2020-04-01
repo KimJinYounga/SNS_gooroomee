@@ -48,7 +48,7 @@
             </v-card-actions>
         </v-card>
         <template v-if="commentOpened">
-            <comment-form :post-id="post.id"></comment-form>
+            <comment-form :post-id="post.postId"></comment-form>
             <v-list>
                 <v-list-item v-for="c in post.Comments" :key="c.id">
                     <v-list-item-avatar color="teal">
@@ -72,7 +72,6 @@
         props: {
             post: {
                 // type: Object,
-                // id:this.$store.state.posts.id,
                 required: true,
             },
         },
@@ -84,7 +83,7 @@
         methods: {
             onRemovePost() {
                 this.$store.dispatch('posts/remove', {
-                    id: this.post.id,
+                    postId: this.post.postId,
                 });
             },
             onEditPost() {

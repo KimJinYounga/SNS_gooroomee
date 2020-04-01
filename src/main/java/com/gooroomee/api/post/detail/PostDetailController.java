@@ -2,6 +2,7 @@ package com.gooroomee.api.post.detail;
 
 import com.gooroomee.api.board.BoardRepository;
 import com.gooroomee.api.error.exception.BoardNotFoundException;
+import com.gooroomee.api.post.Post;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -53,8 +54,8 @@ public class PostDetailController {
 //        if (authentication == null)
 //            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         try {
-            this.postDetailService.storePost(postDetailDto, boardType);
-            return ResponseEntity.ok().build();
+            Post post = this.postDetailService.storePost(postDetailDto, boardType);
+            return ResponseEntity.ok().body(post);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body("게시판등록실패");
         }
@@ -82,7 +83,7 @@ public class PostDetailController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         String visitorId = authentication.getName();
         try {
-            this.postDetailService.deletePost(post_id);
+            this.postDetailService.deletePost(post_id, visitorId);
             return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();
