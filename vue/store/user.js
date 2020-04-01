@@ -1,12 +1,16 @@
 /*
 vuex module
  */
+
+
 export const state = () => ({
     me: null,
     authtoken: null,
     followerList: [],
     followingList: [],
 });
+
+
 // state를 mutations를 통해 바꾼다.(비동기 작업은 mutation에서 할 수 없음,, 단순한 동기적 작업만 가능)
 // mutations는 commit 으로 실행
 export const mutations = {
@@ -47,15 +51,12 @@ export const actions = {
             email: payload.email,
             password: payload.password,
         }).then((data) => {
-            console.log(data);
+            // console.log(data);
             let token = data.headers.authtoken;
             localStorage.setItem("authtoken", token);
+            // console.log("===========", token);
             dispatch('getMemberInfo');
-            let config = {
-                headers: {
-                    "authtoken": data.headers.authtoken,
-                },
-            };
+
             // commit('setMe', payload);
             commit('setAuth', token);
         }).catch((err) => {
@@ -64,21 +65,23 @@ export const actions = {
         });
     },
     getMemberInfo({commit}) {
-        let token = localStorage.getItem("authtoken");
-        let config = {
-            headers: {
-                "authtoken": token,
-            },
-        };
-        this.$axios.get('http://localhost:8080/auth/member', config)
-            .then(res => {
-                commit('setMe', res.data.email);
-                console.log("!!!!!!getmemberinfo_auth" + JSON.stringify(res.data));
-                commit('setAuth', res.data)
-            })
-            .catch(err => {
-                console.log("get axios user" + err)
-            });
+        if (localStorage.getItem("authtoken")) {
+            let token = localStorage.getItem("authtoken");
+            let config = {
+                headers: {
+                    "authtoken": token,
+                },
+            };
+            this.$axios.get('http://localhost:8080/auth/member', config)
+                .then(res => {
+                    commit('setMe', res.data.email);
+                    // console.log("!!!!!!getmemberinfo_auth" + JSON.stringify(res.data));
+                    commit('setAuth', res.data)
+                })
+                .catch(err => {
+                    console.log("get axios user" + err)
+                });
+        }
 
     },
     logOut({commit}, payload) {

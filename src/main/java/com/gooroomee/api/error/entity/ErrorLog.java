@@ -36,7 +36,7 @@ public class ErrorLog {
 	@Column(name = "HOST_NAME", length = 50)
 	private String hostName;
 
-	@Column(name = "PATH", length = 2048)
+	@Column(name = "PATH", length = 200)
 	private String path;
 
 	@Column(name = "MESSAGE", columnDefinition = "TEXT")
