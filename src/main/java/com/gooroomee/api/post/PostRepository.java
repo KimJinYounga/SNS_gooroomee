@@ -9,4 +9,5 @@ import java.util.Optional;
 public interface PostRepository extends JpaRepository<Post, Long> {
     Page<Post> findAllByBoard_BoardType(String board_type, Pageable pageable);
     Optional<Post> findByPostIdAndMember_Email(Long id, String email);
+    Post findPostByPostId(Long postId);
 }

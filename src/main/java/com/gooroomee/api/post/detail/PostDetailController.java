@@ -83,8 +83,8 @@ public class PostDetailController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         String visitorId = authentication.getName();
         try {
-            this.postDetailService.deletePost(post_id, visitorId);
-            return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+            Post post = this.postDetailService.deletePost(post_id, visitorId);
+            return ResponseEntity.ok(post);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();
         }

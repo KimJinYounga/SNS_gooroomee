@@ -1,6 +1,7 @@
 package com.gooroomee.api.error;
 
 import com.gooroomee.api.error.exception.BoardNotFoundException;
+import com.gooroomee.api.error.exception.CommentsNotFoundException;
 import com.gooroomee.api.error.exception.PostNotFoundException;
 import com.gooroomee.api.error.exception.MemberNotFoundException;
 import org.slf4j.Logger;
@@ -39,6 +40,12 @@ public class ExceptionHandleController {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ResponseBody
     public ErrorResponse handleNotFoundBoard(BoardNotFoundException exception){
+        return new ErrorResponse(HttpStatus.NOT_FOUND, exception);
+    }
+    @ExceptionHandler(CommentsNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseBody
+    public ErrorResponse handleNotFoundComment(CommentsNotFoundException exception){
         return new ErrorResponse(HttpStatus.NOT_FOUND, exception);
     }
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)

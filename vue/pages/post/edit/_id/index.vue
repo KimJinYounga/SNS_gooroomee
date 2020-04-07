@@ -4,7 +4,6 @@
             <v-form ref="form" v-model="valid" @submit.prevent="onSubmitForm">
                 <v-text-field
                         v-model="title"
-                        label="제목"
                         type="text"
                 />
                 <v-textarea
@@ -12,14 +11,13 @@
                         outlined
                         auto-grow
                         clearable
-                        label="어떤 신기한 일이 있었나요?"
                         :hide-details="hideDetails"
                         :success-messages="successMessages"
                         :success="success"
                         :rules="[v => !!v.trim() || '내용을 입력하세요.']"
                         @input="onChangeTextarea"
                 />
-                <v-btn type="submit" color="green" absolute right>짹짹</v-btn>
+                <v-btn type="submit" color="green" absolute right>수정</v-btn>
                 <input ref="imageInput" type="file" multiple hidden @change="onChangeImages">
                 <v-btn @click="onClickImageUpload" type="button">이미지 업로드</v-btn>
             </v-form>
@@ -40,8 +38,12 @@
                 successMessages: '',
                 success: false,
                 content: '',
-                title:'',
+                // title:'',
             }
+        },
+        mounted() {
+            this.title = this.post.title;
+            this.content = this.post.content;
         },
         computed: {
             ...mapState('user', ['me']),
@@ -58,8 +60,12 @@
                 }
             },
             onSubmitForm() {
+                console.log("===============================", this.post.postId);
                 if (this.$refs.form.validate()) {
-                    this.$store.dispatch('posts/add', {
+                    this.$store.dispatch('posts/modifyPost', {
+                        commentsLength: this.post.commentsLength,
+                        isDeleted: this.post.isDeleted,
+                        postId: this.post.postId,
                         content: this.content,
                         email:this.me,
                         title:this.title,
