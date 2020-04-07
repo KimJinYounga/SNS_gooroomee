@@ -1,9 +1,10 @@
 <template>
     <v-form ref="form" v-model="valid" style="position: relative" @submit.prevent="onSubmitForm">
         <v-textarea
-         v-model="content"
+         v-model="Comments"
          filled
          auto-grow
+         row-height="8"
          label="댓글 달기"
          :hide-details="hideDetails"
          :success="success"
@@ -27,7 +28,7 @@
         data() {
             return {
                 valid:false,
-                content:'',
+                Comments:'',
                 success:false,
                 successMessages:'',
                 hideDetails:true,
@@ -43,14 +44,16 @@
                 if(this.$refs.form.validate()) {
                     this.$store.dispatch('posts/addComment', {
                         // id:Date.now(),
+                        parentsId: this.parentsId,
                         postId:this.postId,
-                        content:this.content,
+                        // parentsId도 추가해야함 (계층형 댓글 구조)
+                        Comments:this.Comments,
                         User: {
-                            nickname: this.me.email,
+                            nickname: this.me,
                         }
                     })
                         .then(() => {
-                            this.content='';
+                            this.Comments='';
                             this.success=true;
                             this.successMessages='댓글이 작성되었습니다.';
                             this.hideDetails=false;

@@ -31,6 +31,15 @@ public class Post extends CommonDateEntity {
     @Setter
     private String email;
 
+    @Column(name="commentsLength", length = 50)
+    @Setter
+    private Long commentsLength;
+
+    @Builder.Default
+    @Column(name="isDeleted", length = 10)
+    @Setter
+    private Boolean isDeleted = Boolean.FALSE;
+
     @ManyToOne
     @JoinColumn(name = "member_id")
     @Setter

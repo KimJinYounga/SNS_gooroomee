@@ -2,6 +2,7 @@ package com.gooroomee.api.comment;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gooroomee.api.post.Post;
 import com.gooroomee.api.post.detail.PostDetailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,8 +33,8 @@ public class CommentsController {
         if (authentication == null)
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         String visitorId = authentication.getName();
-        this.commentsService.storeComments(visitorId, post_id, commentsDto, parentId);
-        return ResponseEntity.ok().build();
+        Comments comment = this.commentsService.storeComments(visitorId, post_id, commentsDto, parentId);
+        return ResponseEntity.ok().body(comment);
     }
 
     @GetMapping("/{post_id}")
@@ -42,6 +43,21 @@ public class CommentsController {
         String comments = new ObjectMapper().writeValueAsString(commentsDto);
         System.out.println(comments);
         return ResponseEntity.ok().body(commentsDto);
+    }
+
+    @DeleteMapping("/{comments_id}")
+    public ResponseEntity deletePost(@PathVariable Long comments_id) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null)
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        String visitorId = authentication.getName();
+        try {
+            Comments comments = this.commentsService.deleteComment(comments_id, visitorId);
+            return ResponseEntity.ok(comments);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        }
+
     }
 
 }

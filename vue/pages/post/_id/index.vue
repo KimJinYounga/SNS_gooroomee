@@ -24,11 +24,10 @@
         computed: {
             post() {
                 return this.$store.state.posts.mainPosts.find(v => v.postId === parseInt(this.$route.params.id, 10)); // 동적 라우팅(파일이름의 '_id')
-            }
+            },
         }
     }
 </script>
 
 <style>
-
 </style>
