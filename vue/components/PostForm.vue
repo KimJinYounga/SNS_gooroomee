@@ -22,6 +22,7 @@
                 <v-btn type="submit" color="green" absolute right>짹짹</v-btn>
                 <input ref="imageInput" type="file" multiple hidden @change="onChangeImages">
                 <v-btn @click="onClickImageUpload" type="button">이미지 업로드</v-btn>
+
             </v-form>
 
         </v-container>
@@ -67,6 +68,7 @@
                             email: this.me,
                         },
                         Comments: [],
+                        uploadImages: [],
                     })
                         .then(() => {
                             this.content = '';
@@ -86,12 +88,18 @@
                 this.$refs.imageInput.click();
             },
             onChangeImages(e) {
-                console.log(e.target.files);
+                console.log("e.target => ", e.target)
+                console.log("e.target.files => ",e.target.files);
                 const imageFormData = new FormData();
                 [].forEach.call(e.target.files, (f) => {
                     imageFormData.append('file', f);
+                    console.log("f => ", f);
                 });
-                this.$store.dispatch('posts/uploadImages', imageFormData);
+
+                return this.$store.dispatch('posts/uploadImages',
+                    {
+                        imageFormData
+                    });
             },
         },
     };

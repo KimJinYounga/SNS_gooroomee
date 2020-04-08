@@ -20,6 +20,9 @@
                 <v-btn type="submit" color="green" absolute right>수정</v-btn>
                 <input ref="imageInput" type="file" multiple hidden @change="onChangeImages">
                 <v-btn @click="onClickImageUpload" type="button">이미지 업로드</v-btn>
+<!--                <v-list-item v-for="f in post.uploadImages" :key="f.id" style="margin: 10px 0">-->
+                <a href="http://localhost:8080/testDownload/5238389f-b9b7-4dfd-b850-1793d02a0646">{{post.uploadImages}}</a>
+<!--                </v-list-item>-->
             </v-form>
 
         </v-container>
@@ -73,6 +76,7 @@
                             email: this.me,
                         },
                         Comments: [],
+                        // uploadImages: [],
                     })
                         .then(() => {
                             this.content = '';

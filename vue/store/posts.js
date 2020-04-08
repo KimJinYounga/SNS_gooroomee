@@ -51,6 +51,14 @@ export const mutations = {
         console.log("CommentsLength", payload.CommentsLength);
         Vue.set(state.mainPosts[index], 'CommentsLength', payload.CommentsLength);
     },
+    uploadImages(state, payload) {
+        const index = state.mainPosts.findIndex(v => v.postId === payload.postId);
+        console.log(payload);
+        console.log(payload.uri)
+        Vue.set(state.mainPosts[index], 'uploadImages', payload.uri);
+
+    },
+
 
     
 
@@ -112,6 +120,7 @@ export const actions = {
                     createdAt: respObj.createdAt,
                     commentsLength: respObj.commentsLength,
                     isDeleted: respObj.isDeleted,
+
                 })
                 history.go(-1)
             })
@@ -243,20 +252,51 @@ export const actions = {
             })
     },
     uploadImages({commit}, payload) {
-        this.$axios.post('http://localhost:8080/testUpload/1', {
-            fileName: payload.fileName,
-            fileType: payload.fileType,
-            fileUrl: payload.fileUrl,
-        }, {
-            withCredentials: true,
-        })
-            .then((res) => {
+        let token = localStorage.getItem("authtoken");
+        let config = {
+            headers: {
+                "authtoken":token,
+            },
+        };
+        let xhr = new XMLHttpRequest();
+        let xhr2 = new XMLHttpRequest();
+        xhr.onreadystatechange = function() { // 요청에 대한 콜백
+            if (xhr.readyState === xhr.DONE) { // 요청이 완료되면
+                if (xhr.status === 200 || xhr.status === 201) {
+                    const respObj = JSON.parse(xhr.response);
+                    console.log(respObj.fileDownloadUri)
+                    xhr2.open('GET', 'http://localhost:8080'+respObj.fileDownloadUri);
+                    xhr2.send()
+                    console.log("uplaodImages commit 준비")
+                    commit('uploadImages',
+                        {
+                            postId: 74,
+                            uri: respObj.fileDownloadUri
+                        });
+                    console.log("uplaodImages commit 완료")
+                } else {
+                    console.error(xhr.responseText);
+                }
+            }
+        };
+        xhr.open('POST', 'http://localhost:8080/testUpload/74'); // 메소드와 주소 설정
+        xhr.send(payload); // 요청 전송
 
 
-            })
-            .catch(() => {
-
-            })
+        // this.$axios.post('http://localhost:8080/testUpload/74',
+        //     {
+        //         "file": payload,
+        //     },config
+        //     )
+        //     .then((res) => {
+        //         console.log("file upload success!")
+        //         console.log(res.data)
+        //
+        //     })
+        //     .catch((err) => {
+        //         console.log("file upload failed")
+        //         console.log(err)
+        //     })
 
     },
 };

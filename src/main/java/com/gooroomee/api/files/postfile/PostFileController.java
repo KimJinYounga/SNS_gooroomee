@@ -20,14 +20,16 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
+//@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "http://localhost:3000", methods = {RequestMethod.POST, RequestMethod.OPTIONS, RequestMethod.GET}, allowedHeaders = {"Content-Type", "X-Requested-With", "Accept", "Origin", "Access-Control-Request-Method", "Access-Control-Request-Headers"}, exposedHeaders = {"Access-Control-Allow-Origin", "Access-Control-Allow-Credentials"})
 public class PostFileController {
 
     private final PostFileService postFileService;
 
     @PostMapping("/testUpload/{post_id}")
-    public UploadFileResponse upload(@RequestParam("file") MultipartFile file,
+    public UploadFileResponse upload(@RequestParam MultipartFile file,
                                      @PathVariable Long post_id) {
+        System.out.println("File => "+ file);
         PostFile postFile = this.postFileService.storeFile(file, post_id);
         return new UploadFileResponse(postFile.getFile_name(), "/testDownload/"+postFile.getFile_id(), file.getContentType(), file.getSize());
     }
