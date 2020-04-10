@@ -23,8 +23,8 @@ public class PostFileService {
     private PostFileRepository postFileRepository;
 
     @Transactional
-    public PostFile storeFile(MultipartFile file, Long post_id) {
-        String test_file_path="C:\\Users\\gooroomee\\uploads\\"+post_id+"\\";
+    public PostFile storeFile(MultipartFile file) {
+        String test_file_path="C:\\Users\\gooroomee\\uploads\\";
         File f=new File(test_file_path);
         if(!f.exists()) f.mkdirs();
 

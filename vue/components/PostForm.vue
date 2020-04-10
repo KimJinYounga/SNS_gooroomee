@@ -25,6 +25,11 @@
 <!--                <a v-bind:href="downloadUri">{{post.uploadImages}}</a>-->
 
             </v-form>
+            <div v-for="f in post.uploadImages" >
+                <a v-bind:href="downloadUri(f.uri)" >{{f.fileName}}</a>
+                <button @click="onRemoveImage(post.uploadImages)" type="button"><v-icon>mdi-close-thick</v-icon></button>
+            </div>
+
 
         </v-container>
     </v-card>
@@ -48,13 +53,16 @@
         computed: {
             ...mapState('user', ['me']),
             post() {
-                return this.$store.state.posts.mainPosts.find(v => v.postId === parseInt(this.$route.params.id, 10)); // 동적 라우팅(파일이름의 '_id')
+                return this.$store.state.posts.mainPosts;
             },
             // downloadUri() {
             //     return "http://localhost:8080" + this.post.uploadImages;
             // },
         },
         methods: {
+            downloadUri(link) {
+                return "http://localhost:8080" + link;
+            },
             onChangeTextarea(value) {
                 if (value.length) {
                     this.hideDetails = true;
@@ -72,6 +80,7 @@
                             email: this.me,
                         },
                         Comments: [],
+                        fileId: this.post.uploadImages[0].fileId,
                         // uploadImages: [],
                     })
                         .then(() => {
@@ -102,10 +111,10 @@
 
                 console.log("boundary => ", imageFormData._boundary);
 
-                return this.$store.dispatch('posts/uploadImages',
-                    {
-                        imageFormData
-                    });
+                this.$store.dispatch('posts/uploadImages', {
+                    file: imageFormData,
+                    postId: null,
+                });
             },
         },
     };

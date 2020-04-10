@@ -1,6 +1,6 @@
 <template>
     <v-card style="margin-bottom: 20px">
-        <v-container>
+        <v-container >
             <v-form ref="form" v-model="valid" @submit.prevent="onSubmitForm">
                 <v-text-field
                         v-model="title"
@@ -23,11 +23,11 @@
 <!--                <v-list-item v-for="f in post.uploadImages" :key="f.id" style="margin: 10px 0">-->
 
             </v-form>
-
-            <div>
-                <a v-bind:href="downloadUri">{{post.uploadImages}}</a>
+            <div v-for="f in post.uploadImages" >
+                <a v-bind:href="downloadUri(f.uri)" >{{f.fileName}}</a>
                 <button @click="onRemoveImage(post.uploadImages)" type="button"><v-icon>mdi-close-thick</v-icon></button>
             </div>
+
 
         </v-container>
     </v-card>
@@ -59,11 +59,12 @@
             post() {
                 return this.$store.state.posts.mainPosts.find(v => v.postId === parseInt(this.$route.params.id, 10)); // 동적 라우팅(파일이름의 '_id')
             },
-            downloadUri() {
-              return "http://localhost:8080" + this.post.uploadImages;
-            },
+
         },
         methods: {
+            downloadUri(link) {
+                return "http://localhost:8080" + link;
+            },
             onChangeTextarea(value) {
                 if (value.length) {
                     this.hideDetails = true;
@@ -85,7 +86,7 @@
                             email: this.me,
                         },
                         Comments: [],
-                        // uploadImages: [],
+                        fileId: this.post.uploadImages[0].fileId,
                     })
                         .then(() => {
                             this.content = '';
@@ -110,8 +111,11 @@
                 [].forEach.call(e.target.files, (f) => {
                     imageFormData.append('file', f);
                 });
-                console.log("boundary => ", imageFormData._boundary);
-                this.$store.dispatch('posts/uploadImages', imageFormData);
+                console.log("boundary => ", imageFormData);
+                this.$store.dispatch('posts/uploadImages', {
+                    file: imageFormData,
+                    postId: this.post.postId,
+                });
             },
         },
     };

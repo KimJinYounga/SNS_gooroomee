@@ -26,16 +26,15 @@ public class PostFileController {
 
     private final PostFileService postFileService;
 
-    @PostMapping("/testUpload/{post_id}")
-    public UploadFileResponse upload(@RequestParam MultipartFile file,
-                                     @PathVariable Long post_id) {
+    @PostMapping("/fileUpload")
+    public UploadFileResponse upload(@RequestParam MultipartFile file) {
         System.out.println("File => "+ file);
-        PostFile postFile = this.postFileService.storeFile(file, post_id);
-        return new UploadFileResponse(postFile.getFile_name(), "/testDownload/"+postFile.getFile_id(), file.getContentType(), file.getSize());
+        PostFile postFile = this.postFileService.storeFile(file);
+        return new UploadFileResponse(postFile.getFile_id(), postFile.getFile_name(), "/fileDownload/"+postFile.getFile_id(), file.getContentType(), file.getSize());
     }
 
 
-    @GetMapping("/testDownload/{file_id}")
+    @GetMapping("/fileDownload/{file_id}")
     public ResponseEntity<InputStreamResource> testDownload(@PathVariable String file_id) throws IOException{
         PostFile postFile = this.postFileService.getFile(file_id);
         String Path = postFile.getFile_url();

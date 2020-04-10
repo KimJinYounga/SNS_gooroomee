@@ -44,6 +44,7 @@ export const mutations = {
         console.log("length ============> ", payload.length);
         state.mainPosts = state.mainPosts.concat(payload);
         state.hasMorePost = payload.length === limit;
+
     },
     loadComments(state, payload) {
         const index = state.mainPosts.findIndex(v => v.postId === payload.postId);
@@ -54,10 +55,20 @@ export const mutations = {
         Vue.set(state.mainPosts[index], 'CommentsLength', payload.CommentsLength);
     },
     uploadImages(state, payload) {
-        const index = state.mainPosts.findIndex(v => v.postId === payload.postId);
-        console.log(payload);
-        console.log(payload.uri)
-        Vue.set(state.mainPosts[index], 'uploadImages', payload.uri);
+        if (payload.postId !== null){
+            const index = state.mainPosts.findIndex(v => v.postId === payload.postId);
+            console.log(payload);
+            console.log(payload.uri)
+            // Vue.set(state.mainPosts[index], 'uploadImages', payload);
+            Vue.set(state.mainPosts[index], 'uploadImages', []);
+            state.mainPosts[index].uploadImages.push(payload);
+            console.log("payload.fileName=",payload.fileName)
+        }
+        else{
+            Vue.set(state.mainPosts, 'uploadImages', []);
+            state.mainPosts.uploadImages.push(payload);
+        }
+
     },
 
 
@@ -70,6 +81,7 @@ export const actions = {
                 content: payload.content,
                 email: payload.email,
                 title: payload.title,
+                fileId: payload.fileId,
             },
         )
             .then((res) => {
@@ -105,6 +117,7 @@ export const actions = {
                 title: payload.title,
                 commentsLength: payload.commentsLength,
                 isDeleted: payload.isDeleted,
+                fileId: payload.fileId,
             }, config
         )
             .then((res) => {
@@ -119,7 +132,6 @@ export const actions = {
                     createdAt: respObj.createdAt,
                     commentsLength: respObj.commentsLength,
                     isDeleted: respObj.isDeleted,
-
                 })
                 history.go(-1)
             })
@@ -264,54 +276,57 @@ export const actions = {
         let token = localStorage.getItem("authtoken");
 
         let xhr = new XMLHttpRequest();
-        // let xhr2 = new XMLHttpRequest();
-        // xhr.onreadystatechange = function() { // 요청에 대한 콜백
-        //     if (xhr.readyState === xhr.DONE) { // 요청이 완료되면
-        //         if (xhr.status === 200 || xhr.status === 201) {
-        //             const respObj = JSON.parse(xhr.response);
-        //             console.log(respObj.fileDownloadUri)
-        //             xhr2.open('GET', 'http://localhost:8080'+respObj.fileDownloadUri);
-        //             xhr2.send()
-        //             console.log("uplaodImages commit 준비")
-        //             commit('uploadImages',
-        //                 {
-        //                     postId: 74,
-        //                     uri: respObj.fileDownloadUri
-        //                 });
-        //             console.log("uplaodImages commit 완료")
-        //         } else {
-        //             console.error(xhr.responseText);
-        //         }
-        //     }
-        // };
-        // xhr.open('POST', 'http://localhost:8080/testUpload/74'); // 메소드와 주소 설정
-        // xhr.send(payload); // 요청 전송
-
-
-        this.$axios.post('http://localhost:8080/testUpload/74',
-            {
-                payload,
-            }, {
-                headers: {'Content-Type': 'multipart/form-data'},
-
+        let xhr2 = new XMLHttpRequest();
+        xhr.onreadystatechange = function() { // 요청에 대한 콜백
+            if (xhr.readyState === xhr.DONE) { // 요청이 완료되면
+                if (xhr.status === 200 || xhr.status === 201) {
+                    const respObj = JSON.parse(xhr.response);
+                    console.log("============================");
+                    console.log(respObj)
+                    xhr2.open('GET', 'http://localhost:8080'+respObj.fileDownloadUri);
+                    xhr2.send()
+                    console.log("uplaodImages commit 준비")
+                    commit('uploadImages',
+                        {
+                            postId: payload.postId,
+                            uri: respObj.fileDownloadUri,
+                            fileName: respObj.fileName,
+                            fileId:respObj.fileId,
+                        });
+                    console.log("uplaodImages commit 완료")
+                } else {
+                    console.error(xhr.responseText);
+                }
             }
-        )
-            .then((res) => {
-                const respObj = JSON.parse(res.data);
-                commit('uploadImages',
-                    {
-                        postId: 74,
-                        uri: respObj.fileDownloadUri,
-                    });
-                console.log("uplaodImages commit 완료")
-                console.log("file upload success!")
-                console.log(res.data)
+        };
+        xhr.open('POST', 'http://localhost:8080/fileUpload'); // 메소드와 주소 설정
+        xhr.send(payload.file); // 요청 전송
 
-            })
-            .catch((err) => {
-                console.log("file upload failed")
-                console.log(err)
-            })
+
+        // this.$axios.post('http://localhost:8080/fileUpload',
+        //     {
+        //         payload,
+        //     }, {
+        //         headers: {'Content-Type': 'multipart/form-data'},
+        //
+        //     }
+        // )
+        //     .then((res) => {
+        //         const respObj = JSON.parse(res.data);
+        //         commit('uploadImages',
+        //             {
+        //                 postId: 74,
+        //                 uri: respObj.fileDownloadUri,
+        //             });
+        //         console.log("uplaodImages commit 완료")
+        //         console.log("file upload success!")
+        //         console.log(res.data)
+        //
+        //     })
+        //     .catch((err) => {
+        //         console.log("file upload failed")
+        //         console.log(err)
+        //     })
 
 
     },

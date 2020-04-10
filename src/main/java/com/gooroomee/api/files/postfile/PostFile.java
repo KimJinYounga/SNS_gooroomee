@@ -20,5 +20,5 @@ public class PostFile {
     private String file_name;
     private String file_type;
     private String file_url;
-
+    private Long postId;
 }

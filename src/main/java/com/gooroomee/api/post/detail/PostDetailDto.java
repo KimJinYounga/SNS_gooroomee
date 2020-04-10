@@ -14,6 +14,7 @@ public class PostDetailDto {
     private String email;
     private Long commentsLength;
     private Boolean isDeleted;
+    private String fileId;
 
     public Post toEntity(Post post){
         post.setTitle(this.title);

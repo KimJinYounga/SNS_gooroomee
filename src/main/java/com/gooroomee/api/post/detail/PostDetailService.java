@@ -5,6 +5,8 @@ import com.gooroomee.api.board.BoardRepository;
 import com.gooroomee.api.error.exception.BoardNotFoundException;
 import com.gooroomee.api.error.exception.MemberNotFoundException;
 import com.gooroomee.api.error.exception.PostNotFoundException;
+import com.gooroomee.api.files.postfile.PostFile;
+import com.gooroomee.api.files.postfile.PostFileRepository;
 import com.gooroomee.api.member.MemberRepository;
 import com.gooroomee.api.post.Post;
 import com.gooroomee.api.post.PostRepository;
@@ -25,6 +27,8 @@ public class PostDetailService {
 
     private final MemberRepository memberRepository;
 
+    private final PostFileRepository postFileRepository;
+
     private final ModelMapper modelMapper;
 
     @Transactional
@@ -44,13 +48,18 @@ public class PostDetailService {
         post.setCommentsLength((long) 0);
         post.setIsDeleted(Boolean.FALSE);
         Post savePost = this.postRepository.save(post);
-
+        PostFile file = this.postFileRepository.findById(postDetailDto.getFileId()).orElseThrow();
+        file.setPostId(post.getPostId());
+        this.postFileRepository.save(file);
         return savePost;
     }
 
     @Transactional
     public PostDetailDto updatePost(Long post_id, PostDetailDto postDetailDto) {
         Post post = this.postRepository.findById(post_id).orElseThrow(PostNotFoundException::new);
+        PostFile file = this.postFileRepository.findById(postDetailDto.getFileId()).orElseThrow();
+        file.setPostId(post.getPostId());
+        this.postFileRepository.save(file);
         postDetailDto.toEntity(post);
         this.postRepository.save(post);
         PostDetailDto returnValue = this.modelMapper.map(post, PostDetailDto.class);
