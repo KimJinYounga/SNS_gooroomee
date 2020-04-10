@@ -1,4 +1,5 @@
 import Vue from 'vue';
+
 export const state = () => ({
     mainPosts: [],
     hasMorePost: true,
@@ -6,14 +7,14 @@ export const state = () => ({
 
 
 const limit = 5;
-let pagination = 0;
+let pagination = -1;
 export const mutations = {
     addMainPost(state, payload) {
         state.mainPosts.unshift(payload); //최신 게시글을 맨 앞에 보여줄 것이므로 push가 아닌 unshift
     },
     modifyPost(state, payload) {
         const index = state.mainPosts.findIndex(v => v.postId === payload.postId);
-        console.log("modify index ", index)
+        // console.log("modify index ", index)
         state.mainPosts[index].title = payload.title;
         state.mainPosts[index].content = payload.content;
     },
@@ -24,31 +25,32 @@ export const mutations = {
     },
     removeComment(state, payload) {
         const postIndex = state.mainPosts.findIndex(v => v.postId === payload.postId);
-        console.log("postIndex =>", postIndex);
+        // console.log("postIndex =>", postIndex);
         const commentsIndex = state.mainPosts[postIndex].Comments.findIndex(v => v.commentsId === payload.commentsId);
-        console.log("commentsIndex =>", commentsIndex);
+        // console.log("commentsIndex =>", commentsIndex);
         state.mainPosts[postIndex].Comments[commentsIndex].comments = "삭제된 댓글 입니다.";
     },
     addComment(state, payload) {
         const index = state.mainPosts.findIndex(v => v.postId === payload.postId);
-        console.log("postId", payload.postId);
-        console.log(index);
-        console.log("payload", payload);
-        console.log(state.mainPosts[index]);
-        state.mainPosts[index].commentsLength +=1;
+        // console.log("postId", payload.postId);
+        // console.log(index);
+        // console.log("payload", payload);
+        // console.log(state.mainPosts[index]);
+        state.mainPosts[index].commentsLength += 1;
         state.mainPosts[index].Comments.push(payload);
 
     },
     loadPosts(state, payload) {
+        console.log("length ============> ", payload.length);
         state.mainPosts = state.mainPosts.concat(payload);
         state.hasMorePost = payload.length === limit;
     },
     loadComments(state, payload) {
         const index = state.mainPosts.findIndex(v => v.postId === payload.postId);
-        console.log("indexId",index);
-        console.log("postId", payload.postId);
+        // console.log("indexId", index);
+        // console.log("postId", payload.postId);
         Vue.set(state.mainPosts[index], 'Comments', payload.data);
-        console.log("CommentsLength", payload.CommentsLength);
+        // console.log("CommentsLength", payload.CommentsLength);
         Vue.set(state.mainPosts[index], 'CommentsLength', payload.CommentsLength);
     },
     uploadImages(state, payload) {
@@ -56,11 +58,8 @@ export const mutations = {
         console.log(payload);
         console.log(payload.uri)
         Vue.set(state.mainPosts[index], 'uploadImages', payload.uri);
-
     },
 
-
-    
 
 };
 
@@ -106,7 +105,7 @@ export const actions = {
                 title: payload.title,
                 commentsLength: payload.commentsLength,
                 isDeleted: payload.isDeleted,
-            },config
+            }, config
         )
             .then((res) => {
                 const Obj = JSON.stringify(res.data);
@@ -164,7 +163,7 @@ export const actions = {
             };
             this.$axios.delete(`http://localhost:8080/comments/${payload.commentsId}`, config)
                 .then((res) => {
-                    console.log("removeComment payload.commentsId-> ", payload.commentsId)
+                        console.log("removeComment payload.commentsId-> ", payload.commentsId)
                         commit('removeComment', payload)
                         console.log("delete 성공" + res.data)
                     }
@@ -184,10 +183,10 @@ export const actions = {
             },
         };
         this.$axios.post(`http://localhost:8080/comments/${payload.postId}`, {
-                parentsId: payload.parentsId,
-                comments: payload.Comments,
-                email: payload.User.nickname,
-            }, config)
+            parentsId: payload.parentsId,
+            comments: payload.Comments,
+            email: payload.User.nickname,
+        }, config)
             .then((res) => {
                 const Obj = JSON.stringify(res.data);
                 const respObj = JSON.parse(Obj);
@@ -215,34 +214,44 @@ export const actions = {
         // });
     },
     loadPosts({commit, state}, payload) {
+        console.log("loadPosts 호출");
         if (state.hasMorePost) {
-            return this.$axios.get('http://localhost:8080/posts/free?size=5&sort=postId,DESC&page=' + pagination)
+            console.log("posts/loadPosts 실행 " , pagination);
+            let count = 0
+            console.log("count ")
+            pagination += 1;
+             this.$axios.get('http://localhost:8080/posts/free?size=5&sort=postId,DESC&page=' + pagination)
                 .then((res) => {
-                    pagination += 1;
+                    console.log(count)
+                    count = count +1
+                    console.log("posts/loadPosts 실행성공 pagination=", pagination);
+
                     const Obj = JSON.stringify(res.data);
                     const respObj = JSON.parse(Obj);
                     const json = respObj._embedded.postList;
                     commit('loadPosts', json);
+                    console.log("loadPosts 커밋 성공!", json[0].postId);
+
                 })
                 .catch((err) => {
-                    // console.error("loadPosts err catch! =>>   ", err);
+                    console.error("loadPosts err catch! =>>   ", err);
                 });
 
         }
     },
     loadComments({commit}, payload) {
-        console.log("posts/loadComments호출")
+        // console.log("posts/loadComments호출")
         this.$axios.get(`http://localhost:8080/comments/${payload.postId}`)
             .then((res) => {
-                console.log("comments 성공")
+                // console.log("comments 성공")
                 const Obj = JSON.stringify(res.data);
                 const respObj = JSON.parse(Obj);
-                console.log("=========")
-                console.log(respObj)
+                // console.log("=========")
+                // console.log(respObj)
                 commit('loadComments',
                     {
                         postId: payload.postId,
-                        data:respObj,
+                        data: respObj,
                         CommentsLength: respObj.length,
                     });
 
@@ -253,50 +262,57 @@ export const actions = {
     },
     uploadImages({commit}, payload) {
         let token = localStorage.getItem("authtoken");
-        let config = {
-            headers: {
-                "authtoken":token,
-            },
-        };
+
         let xhr = new XMLHttpRequest();
-        let xhr2 = new XMLHttpRequest();
-        xhr.onreadystatechange = function() { // 요청에 대한 콜백
-            if (xhr.readyState === xhr.DONE) { // 요청이 완료되면
-                if (xhr.status === 200 || xhr.status === 201) {
-                    const respObj = JSON.parse(xhr.response);
-                    console.log(respObj.fileDownloadUri)
-                    xhr2.open('GET', 'http://localhost:8080'+respObj.fileDownloadUri);
-                    xhr2.send()
-                    console.log("uplaodImages commit 준비")
-                    commit('uploadImages',
-                        {
-                            postId: 74,
-                            uri: respObj.fileDownloadUri
-                        });
-                    console.log("uplaodImages commit 완료")
-                } else {
-                    console.error(xhr.responseText);
-                }
+        // let xhr2 = new XMLHttpRequest();
+        // xhr.onreadystatechange = function() { // 요청에 대한 콜백
+        //     if (xhr.readyState === xhr.DONE) { // 요청이 완료되면
+        //         if (xhr.status === 200 || xhr.status === 201) {
+        //             const respObj = JSON.parse(xhr.response);
+        //             console.log(respObj.fileDownloadUri)
+        //             xhr2.open('GET', 'http://localhost:8080'+respObj.fileDownloadUri);
+        //             xhr2.send()
+        //             console.log("uplaodImages commit 준비")
+        //             commit('uploadImages',
+        //                 {
+        //                     postId: 74,
+        //                     uri: respObj.fileDownloadUri
+        //                 });
+        //             console.log("uplaodImages commit 완료")
+        //         } else {
+        //             console.error(xhr.responseText);
+        //         }
+        //     }
+        // };
+        // xhr.open('POST', 'http://localhost:8080/testUpload/74'); // 메소드와 주소 설정
+        // xhr.send(payload); // 요청 전송
+
+
+        this.$axios.post('http://localhost:8080/testUpload/74',
+            {
+                payload,
+            }, {
+                headers: {'Content-Type': 'multipart/form-data'},
+
             }
-        };
-        xhr.open('POST', 'http://localhost:8080/testUpload/74'); // 메소드와 주소 설정
-        xhr.send(payload); // 요청 전송
+        )
+            .then((res) => {
+                const respObj = JSON.parse(res.data);
+                commit('uploadImages',
+                    {
+                        postId: 74,
+                        uri: respObj.fileDownloadUri,
+                    });
+                console.log("uplaodImages commit 완료")
+                console.log("file upload success!")
+                console.log(res.data)
 
+            })
+            .catch((err) => {
+                console.log("file upload failed")
+                console.log(err)
+            })
 
-        // this.$axios.post('http://localhost:8080/testUpload/74',
-        //     {
-        //         "file": payload,
-        //     },config
-        //     )
-        //     .then((res) => {
-        //         console.log("file upload success!")
-        //         console.log(res.data)
-        //
-        //     })
-        //     .catch((err) => {
-        //         console.log("file upload failed")
-        //         console.log(err)
-        //     })
 
     },
 };

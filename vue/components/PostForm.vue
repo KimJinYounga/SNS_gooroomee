@@ -22,6 +22,7 @@
                 <v-btn type="submit" color="green" absolute right>짹짹</v-btn>
                 <input ref="imageInput" type="file" multiple hidden @change="onChangeImages">
                 <v-btn @click="onClickImageUpload" type="button">이미지 업로드</v-btn>
+<!--                <a v-bind:href="downloadUri">{{post.uploadImages}}</a>-->
 
             </v-form>
 
@@ -49,6 +50,9 @@
             post() {
                 return this.$store.state.posts.mainPosts.find(v => v.postId === parseInt(this.$route.params.id, 10)); // 동적 라우팅(파일이름의 '_id')
             },
+            // downloadUri() {
+            //     return "http://localhost:8080" + this.post.uploadImages;
+            // },
         },
         methods: {
             onChangeTextarea(value) {
@@ -68,7 +72,7 @@
                             email: this.me,
                         },
                         Comments: [],
-                        uploadImages: [],
+                        // uploadImages: [],
                     })
                         .then(() => {
                             this.content = '';
@@ -95,6 +99,8 @@
                     imageFormData.append('file', f);
                     console.log("f => ", f);
                 });
+
+                console.log("boundary => ", imageFormData._boundary);
 
                 return this.$store.dispatch('posts/uploadImages',
                     {
