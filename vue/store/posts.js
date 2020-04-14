@@ -1,4 +1,5 @@
 import Vue from 'vue';
+import throttle from 'lodash.throttle';
 
 export const state = () => ({
     mainPosts: [],
@@ -41,9 +42,14 @@ export const mutations = {
 
     },
     loadPosts(state, payload) {
-        console.log("length ============> ", payload.length);
-        state.mainPosts = state.mainPosts.concat(payload);
-        state.hasMorePost = payload.length === limit;
+        if (payload.reset) {
+            state.mainPosts = payload.data;
+        } else {
+            state.mainPosts = state.mainPosts.concat(payload.data);
+        }
+        // console.log("length ============> ", payload.length);
+        // state.mainPosts = state.mainPosts.concat(payload);
+        state.hasMorePost = payload.data.length === limit;
 
     },
     loadComments(state, payload) {
@@ -55,16 +61,15 @@ export const mutations = {
         Vue.set(state.mainPosts[index], 'CommentsLength', payload.CommentsLength);
     },
     uploadImages(state, payload) {
-        if (payload.postId !== null){
+        if (payload.postId !== null) {
             const index = state.mainPosts.findIndex(v => v.postId === payload.postId);
             console.log(payload);
             console.log(payload.uri)
             // Vue.set(state.mainPosts[index], 'uploadImages', payload);
             Vue.set(state.mainPosts[index], 'uploadImages', []);
             state.mainPosts[index].uploadImages.push(payload);
-            console.log("payload.fileName=",payload.fileName)
-        }
-        else{
+            console.log("payload.fileName=", payload.fileName)
+        } else {
             Vue.set(state.mainPosts, 'uploadImages', []);
             state.mainPosts.uploadImages.push(payload);
         }
@@ -203,7 +208,6 @@ export const actions = {
                 const Obj = JSON.stringify(res.data);
                 const respObj = JSON.parse(Obj);
                 console.log("addComment 성공!!!!!!!!!" + Obj);
-                // commit('addComment', Obj);
                 commit('addComment', {
                     parentsId: respObj.parentsId,
                     postId: respObj.post.postId,
@@ -220,37 +224,39 @@ export const actions = {
                 console.log(err);
             });
 
-        // commit('addComment', {
-        //     Comments: payload.Comments,
-        //     email: payload.User.nickname,
-        // });
     },
-    loadPosts({commit, state}, payload) {
-        console.log("loadPosts 호출");
-        if (state.hasMorePost) {
-            console.log("posts/loadPosts 실행 " , pagination);
-            let count = 0
-            console.log("count ")
-            pagination += 1;
-             this.$axios.get('http://localhost:8080/posts/free?size=5&sort=postId,DESC&page=' + pagination)
-                .then((res) => {
-                    console.log(count)
-                    count = count +1
-                    console.log("posts/loadPosts 실행성공 pagination=", pagination);
+    loadPosts: throttle(async function ({commit, state}, payload) {
+        pagination += 1;
+        if (payload && payload.reset)
+            pagination = 0;
 
-                    const Obj = JSON.stringify(res.data);
-                    const respObj = JSON.parse(Obj);
-                    const json = respObj._embedded.postList;
-                    commit('loadPosts', json);
-                    console.log("loadPosts 커밋 성공!", json[0].postId);
+        await this.$axios.get('http://localhost:8080/posts/free?size=5&sort=postId,DESC&page=' + pagination)
+            .then((res) => {
+                console.log("posts/loadPosts 실행성공 pagination=", pagination);
+                const Obj = JSON.stringify(res.data);
+                const respObj = JSON.parse(Obj);
+                const json = respObj._embedded.postList;
+                if (payload && payload.reset) {
+                    commit('loadPosts', {
+                        data: json,
+                        reset: true,
+                    });
+                    return;
+                }
+                if (state.hasMorePost) {
+                    commit('loadPosts', {
+                        data: json,
+                    });
+                    return;
+                }
 
-                })
-                .catch((err) => {
-                    console.error("loadPosts err catch! =>>   ", err);
-                });
+            })
+            .catch((err) => {
+                console.error("loadPosts err catch! =>>   ", err);
+            });
 
-        }
-    },
+
+    }, 2000),
     loadComments({commit}, payload) {
         // console.log("posts/loadComments호출")
         this.$axios.get(`http://localhost:8080/comments/${payload.postId}`)
@@ -277,13 +283,13 @@ export const actions = {
 
         let xhr = new XMLHttpRequest();
         let xhr2 = new XMLHttpRequest();
-        xhr.onreadystatechange = function() { // 요청에 대한 콜백
+        xhr.onreadystatechange = function () { // 요청에 대한 콜백
             if (xhr.readyState === xhr.DONE) { // 요청이 완료되면
                 if (xhr.status === 200 || xhr.status === 201) {
                     const respObj = JSON.parse(xhr.response);
                     console.log("============================");
                     console.log(respObj)
-                    xhr2.open('GET', 'http://localhost:8080'+respObj.fileDownloadUri);
+                    xhr2.open('GET', 'http://localhost:8080' + respObj.fileDownloadUri);
                     xhr2.send()
                     console.log("uplaodImages commit 준비")
                     commit('uploadImages',
@@ -291,7 +297,7 @@ export const actions = {
                             postId: payload.postId,
                             uri: respObj.fileDownloadUri,
                             fileName: respObj.fileName,
-                            fileId:respObj.fileId,
+                            fileId: respObj.fileId,
                         });
                     console.log("uplaodImages commit 완료")
                 } else {

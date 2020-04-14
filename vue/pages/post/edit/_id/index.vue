@@ -73,6 +73,13 @@
                 }
             },
             onSubmitForm() {
+                let fileId;
+                if (this.post.uploadImages === undefined) {
+                    fileId=undefined;
+                }
+                else{
+                    fileId = this.post.uploadImages[0].fileId;
+                }
                 console.log("===============================", this.post.postId);
                 if (this.$refs.form.validate()) {
                     this.$store.dispatch('posts/modifyPost', {
@@ -86,7 +93,7 @@
                             email: this.me,
                         },
                         Comments: [],
-                        fileId: this.post.uploadImages[0].fileId,
+                        fileId: fileId,
                     })
                         .then(() => {
                             this.content = '';

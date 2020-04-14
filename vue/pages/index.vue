@@ -40,12 +40,16 @@
         },
         // fetch({store}) { // 처음 시작할 때 데이터를 넣어줌
         //     console.log("fetch ")
-        //     return store.dispatch('posts/loadPosts'); // 화면이 뜨기 전에 미리 게시글 10개를 서버에서 로딩함
+        //     return store.dispatch('posts/loadPosts', {
+        //         reset: true,
+        //     });
         // },
 
         mounted() {
             console.log("mounted");
-            this.$store.dispatch('posts/loadPosts');
+            this.$store.dispatch('posts/loadPosts',
+                { reset: true,}
+            );
             window.addEventListener('scroll', this.onScroll);
             this.$store.dispatch('user/getMemberInfo')
         },
@@ -55,7 +59,7 @@
         methods: {
             onScroll() {
                 console.log('scroll');
-                if (window.scrollY + document.documentElement.clientHeight > document.documentElement.scrollHeight - 100) {
+                if (window.scrollY + document.documentElement.clientHeight > document.documentElement.scrollHeight - 200) {
                     if (this.hasMorePost) {
                         console.log("index의 onScroll() loadPosts 호출");
                         this.$store.dispatch('posts/loadPosts');

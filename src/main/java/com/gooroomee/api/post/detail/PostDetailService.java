@@ -48,6 +48,9 @@ public class PostDetailService {
         post.setCommentsLength((long) 0);
         post.setIsDeleted(Boolean.FALSE);
         Post savePost = this.postRepository.save(post);
+        if (postDetailDto.getFileId() == null) {
+            return savePost;
+        }
         PostFile file = this.postFileRepository.findById(postDetailDto.getFileId()).orElseThrow();
         file.setPostId(post.getPostId());
         this.postFileRepository.save(file);
@@ -57,12 +60,18 @@ public class PostDetailService {
     @Transactional
     public PostDetailDto updatePost(Long post_id, PostDetailDto postDetailDto) {
         Post post = this.postRepository.findById(post_id).orElseThrow(PostNotFoundException::new);
-        PostFile file = this.postFileRepository.findById(postDetailDto.getFileId()).orElseThrow();
-        file.setPostId(post.getPostId());
-        this.postFileRepository.save(file);
         postDetailDto.toEntity(post);
         this.postRepository.save(post);
+
         PostDetailDto returnValue = this.modelMapper.map(post, PostDetailDto.class);
+        if (postDetailDto.getFileId() == null) {
+            return returnValue;
+        }
+        else {
+            PostFile file = this.postFileRepository.findById(postDetailDto.getFileId()).orElseThrow();
+            file.setPostId(post.getPostId());
+            this.postFileRepository.save(file);
+        }
         return returnValue;
     }
 

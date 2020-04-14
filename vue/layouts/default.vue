@@ -7,8 +7,11 @@
                 </v-toolbar-title>
                 <v-spacer/>
                 <v-toolbar-items>
-                    <v-text-field label="검색" hide-details prepend-icon="mdi-magnify"
+                    <v-form @submit.prevent="onSearch">
+                    <v-text-field label="검색"
+                                  v-model="filter" hide-details prepend-icon="mdi-magnify"
                                   :style="{ display: 'flex', alignItems: 'center' }"/>
+                    </v-form>
                     <v-btn text nuxt to="/profile" :style="{ display: 'flex', alignItems: 'center' }">
                         <div>프로필</div>
                     </v-btn>
@@ -34,6 +37,11 @@
     import LoginForm from '~/components/LoginForm';
 
     export default {
+        data() {
+          return {
+              filter: '',
+          }
+        },
         components: {
             LoginForm,
         },
@@ -41,7 +49,15 @@
         },
 
         computed: {},
-        methods: {}
+        methods: {
+            onSearch() {
+                console.log("onSearch .. ")
+                return this.$store.dispatch('posts/loadPosts', {
+                    reset: true,
+                    filter:this.filter,
+                });
+            }
+        }
     };
 </script>
 

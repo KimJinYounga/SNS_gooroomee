@@ -71,6 +71,13 @@
                 }
             },
             onSubmitForm() {
+                let fileId;
+                if (this.post.uploadImages === undefined) {
+                    fileId=undefined;
+                }
+                else{
+                    fileId = this.post.uploadImages[0].fileId;
+                }
                 if (this.$refs.form.validate()) {
                     this.$store.dispatch('posts/add', {
                         content: this.content,
@@ -80,7 +87,7 @@
                             email: this.me,
                         },
                         Comments: [],
-                        fileId: this.post.uploadImages[0].fileId,
+                        fileId: fileId,
                         // uploadImages: [],
                     })
                         .then(() => {

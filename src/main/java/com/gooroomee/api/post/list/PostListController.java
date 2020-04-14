@@ -9,10 +9,7 @@ import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 
@@ -29,8 +26,9 @@ public class PostListController {
      */
     @GetMapping("/{board_type}")
     public ResponseEntity getPostsList(@PathVariable(name = "board_type") String board_type,
+                                       @RequestParam(value = "filter", required = false) String filter,
             Pageable pageable, PagedResourcesAssembler<Post> assembler) {
-        Page<Post> page = this.postListService.getPostsList(board_type, pageable);
+        Page<Post> page = this.postListService.getPostsList(board_type,filter,pageable);
         PagedModel<PostListResource> pagedResources = assembler.toModel(page, e -> new PostListResource(e));
         pagedResources.add(linkTo(PostListController.class).withRel("posts-list"));
         return ResponseEntity.ok(pagedResources);

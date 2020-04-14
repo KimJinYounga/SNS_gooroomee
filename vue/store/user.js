@@ -64,7 +64,7 @@ export const actions = {
             console.error("다시 로그인하라!!!!", err);
         });
     },
-    getMemberInfo({commit}) {
+    getMemberInfo({dispatch, commit}) {
         if (localStorage.getItem("authtoken")) {
             let token = localStorage.getItem("authtoken");
             let config = {
@@ -77,6 +77,7 @@ export const actions = {
                     commit('setMe', res.data.email);
                     // console.log("!!!!!!getmemberinfo_auth" + JSON.stringify(res.data));
                     commit('setAuth', res.data)
+
                 })
                 .catch(err => {
                     console.log("get axios user" + err)
