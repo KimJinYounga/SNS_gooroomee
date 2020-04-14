@@ -10,8 +10,29 @@
                     <v-form @submit.prevent="onSearch">
                     <v-text-field label="검색"
                                   v-model="filter" hide-details prepend-icon="mdi-magnify"
-                                  :style="{ display: 'flex', alignItems: 'center' }"/>
+                                  :style="{ display: 'flex', alignItems: 'center'}"/>
                     </v-form>
+                    <v-menu bottom left>
+                        <template v-slot:activator="{ on }">
+                            <v-btn
+                                    dark
+                                    icon
+                                    v-on="on"
+                            >
+                                <v-icon>mdi-dots-vertical</v-icon>
+                            </v-btn>
+                        </template>
+
+                        <v-list>
+                            <v-list-item
+                                    v-for="(item, i) in [{title:'Email'}, {title: 'Content'}]"
+                                    :key="i"
+                                    @click=""
+                            >
+                                <v-list-item-title>{{ item.title }}</v-list-item-title>
+                            </v-list-item>
+                        </v-list>
+                    </v-menu>
                     <v-btn text nuxt to="/profile" :style="{ display: 'flex', alignItems: 'center' }">
                         <div>프로필</div>
                     </v-btn>
@@ -51,11 +72,10 @@
         computed: {},
         methods: {
             onSearch() {
-                console.log("onSearch .. ")
-                return this.$store.dispatch('posts/loadPosts', {
-                    reset: true,
-                    filter:this.filter,
+                this.$router.push({
+                    path: `/search/${this.filter}`,
                 });
+                this.filter='';
             }
         }
     };

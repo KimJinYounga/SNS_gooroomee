@@ -20,7 +20,6 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 @CrossOrigin(origins = "http://localhost:3000")
 public class PostListController {
     private final PostListService postListService;
-
     /*
     게시판 전체 리스트 검색
      */
@@ -33,4 +32,14 @@ public class PostListController {
         pagedResources.add(linkTo(PostListController.class).withRel("posts-list"));
         return ResponseEntity.ok(pagedResources);
     }
+
+    @GetMapping("/profile/{email}")
+    public ResponseEntity getMemberPostsList(@PathVariable(name = "email") String email,
+                                       Pageable pageable, PagedResourcesAssembler<Post> assembler) {
+        Page<Post> page = this.postListService.getMemberPostsList(email,pageable);
+        PagedModel<PostListResource> pagedResources = assembler.toModel(page, e -> new PostListResource(e));
+        pagedResources.add(linkTo(PostListController.class).withRel("posts-list"));
+        return ResponseEntity.ok(pagedResources);
+    }
+
 }

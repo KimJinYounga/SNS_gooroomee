@@ -3,15 +3,17 @@
         <v-card>
             <!--            <v-image/>-->
             <v-card-text>
-                <v-list-item>
-                    <v-list-item-avatar color="teal">
-                        <span>{{ post.email[0] }}</span>
-                    </v-list-item-avatar>
-                    <v-list-item-content>
-                        <v-list-item-title>{{ post.email }}</v-list-item-title>
-                        <v-list-item-subtitle>{{ post.createdAt}}</v-list-item-subtitle>
-                    </v-list-item-content>
-                </v-list-item>
+                <nuxt-link :to="`/member/`+post.email">
+                    <v-list-item>
+                        <v-list-item-avatar color="teal">
+                            <span>{{ post.email[0] }}</span>
+                        </v-list-item-avatar>
+                        <v-list-item-content>
+                            <v-list-item-title>{{ post.email }}</v-list-item-title>
+                            <v-list-item-subtitle>{{ post.createdAt}}</v-list-item-subtitle>
+                        </v-list-item-content>
+                    </v-list-item>
+                </nuxt-link>
                 <nuxt-link :to="'/post/' + post.postId">
                     <v-list-item v-if="!post.isDeleted">
                         <p> {{ post.title }}</p>
@@ -24,11 +26,8 @@
             </v-card-text>
             <div v-if="!post.isDeleted">
                 <v-card-actions>
-                    <v-btn text color="orange">
-                        <v-icon>mdi-twitter-retweet</v-icon>
-                    </v-btn>
-                    <v-btn text color="orange">
-                        <v-icon>mdi-heart-outline</v-icon>
+                    <v-btn text color="orange" @click="fav = !fav">
+                        <v-icon>{{heartIcon}}</v-icon>
                     </v-btn>
                     <v-btn text color="orange" @click="onToggleComment">
                         <v-icon>mdi-comment-outline</v-icon>
@@ -43,7 +42,7 @@
                         <div style="background: white">
                             <v-btn dark color="red" @click="openConfirm">삭제</v-btn>
                             <nuxt-link :to="'/post/edit/' + post.postId">
-                            <v-btn text color="orange">수정</v-btn>
+                                <v-btn text color="orange">수정</v-btn>
                             </nuxt-link>
                         </div>
                     </v-menu>
@@ -167,6 +166,7 @@
         },
         data() {
             return {
+                fav: false,
                 commentOpened: false,
                 visible: false,
                 dialog: false,
@@ -182,8 +182,20 @@
             authtoken() {
                 return this.$store.state.user.authtoken;
             },
+            heartIcon() {
+                return this.fav ? 'mdi-heart' : 'mdi-heart-outline';
+            },
+            // liked() {
+            //     const me = this.$store.state.users.me;
+            //     return !!(this.post.Likers || []).find(v => v.id === (me && me.id));
+            // },
         },
         methods: {
+            onClickHeart() {
+                if (!this.me) {
+                    return alert('로그인이 필요합니다.');
+                }
+            },
             ok() {
                 this.$store.dispatch('posts/remove', {
                     postId: this.post.postId,

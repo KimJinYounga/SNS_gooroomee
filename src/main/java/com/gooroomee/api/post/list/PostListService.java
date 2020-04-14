@@ -23,9 +23,15 @@ public class PostListService {
             page = this.postRepository.findAllByBoard_BoardType(board_type, pageable);
         }
         else {
-            page = this.postRepository.findAllByBoard_BoardTypeAndEmail(board_type, filter, pageable);
+//            page = this.postRepository.findAllByBoard_BoardTypeAndEmail(board_type, filter, pageable);
+            page = this.postRepository.findAllByEmailAndContent(filter, pageable);
+            System.out.println("page ==> " + page);
         }
-//        log.info("count Comments!! => "+commentsRepository.countAllByPost_PostId((long) 62));
+        return page;
+    }
+
+    public Page<Post> getMemberPostsList(String email, Pageable pageable) {
+        Page<Post> page = this.postRepository.findAllByEmail(email, pageable);
         return page;
     }
 }

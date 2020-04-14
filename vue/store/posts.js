@@ -159,6 +159,9 @@ export const actions = {
                 .then((res) => {
                         commit('removeMainPost', payload)
                         console.log("delete 성공" + res.data)
+                    this.$router.push({
+                        path: '/',
+                    });
                     }
                 )
                 .catch((err) => {
@@ -256,6 +259,80 @@ export const actions = {
             });
 
 
+    }, 2000),
+
+    searchPosts: throttle(async function ({commit, state}, payload) {
+        pagination += 1;
+        if (payload && payload.reset)
+            pagination = 0;
+
+        await this.$axios.get('http://localhost:8080/posts/free?size=5&sort=postId,DESC&page=' + pagination + '&filter='+payload.filter)
+            .then((res) => {
+                console.log("posts/loadPosts 실행성공 pagination=", pagination);
+                const Obj = JSON.stringify(res.data);
+                const respObj = JSON.parse(Obj);
+                try {
+                    const json = respObj._embedded.postList;
+                    if (payload && payload.reset) {
+                        commit('loadPosts', {
+                            data: json,
+                            reset: true,
+                        });
+                        return;
+                    }
+                    if (state.hasMorePost) {
+                        commit('loadPosts', {
+                            data: json,
+                        });
+                        return;
+                    }
+                }catch (e) {
+                    commit('loadPosts', {
+                        data: "",
+                        reset: true,
+                    });
+                    return;
+                }
+
+            })
+            .catch((err) => {
+                console.error("loadPosts err catch! =>>   ", err);
+            });
+
+
+    }, 2000),
+    memberPosts: throttle(async function ({commit, state}, payload) {
+            if (state.hasMorePost) {
+                pagination += 1;
+                if (payload && payload.reset)
+                    pagination = 0;
+
+                await this.$axios.get('http://localhost:8080/posts/profile/' + payload.email + '?size=5&sort=postId,DESC&page=' + pagination)
+                    .then((res) => {
+                        console.log("posts/loadPosts 실행성공 pagination=", pagination);
+                        const Obj = JSON.stringify(res.data);
+                        const respObj = JSON.parse(Obj);
+                        const json = respObj._embedded.postList;
+                        if (payload && payload.reset) {
+                            commit('loadPosts', {
+                                data: json,
+                                reset: true,
+                            });
+                            return;
+                        }
+                        if (state.hasMorePost) {
+                            commit('loadPosts', {
+                                data: json,
+                            });
+                            return;
+                        }
+
+                    })
+                    .catch((err) => {
+                        console.error("loadPosts err catch! =>>   ", err);
+                    });
+
+            }
     }, 2000),
     loadComments({commit}, payload) {
         // console.log("posts/loadComments호출")

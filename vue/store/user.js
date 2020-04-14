@@ -89,7 +89,7 @@ export const actions = {
         commit('setAuth', null);
         localStorage.removeItem('authtoken');
     },
-    changeEmail({commit}, payload) {
+    changeName({commit}, payload) {
         commit('changeEmail', payload);
     },
 };
