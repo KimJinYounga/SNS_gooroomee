@@ -16,11 +16,11 @@
                     </v-form>
                 </v-container>
             </v-card>
-            <v-card style="margin-bottom: 20px">
-                <v-container>
-                    <v-subheader>비밀번호 변경</v-subheader>
-                </v-container>
-            </v-card>
+<!--            <v-card style="margin-bottom: 20px">-->
+<!--                <v-container>-->
+<!--                    <v-subheader>비밀번호 변경</v-subheader>-->
+<!--                </v-container>-->
+<!--            </v-card>-->
             <v-card style="margin-bottom: 20px">
                 <v-container>
                     <v-subheader>팔로잉</v-subheader>

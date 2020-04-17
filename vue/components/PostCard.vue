@@ -6,6 +6,10 @@
                 <nuxt-link :to="`/member/`+post.email">
                     <v-list-item>
                         <v-list-item-avatar color="teal">
+                            <!--                            <v-img-->
+                            <!--                                    src="http://localhost:8080/fileDownload/1a9974e0-5507-47ee-9a52-6e6444f3a87f"-->
+
+                            <!--                             />-->
                             <span>{{ post.email[0] }}</span>
                         </v-list-item-avatar>
                         <v-list-item-content>
@@ -52,31 +56,54 @@
         </v-card>
         <template v-if="commentOpened">
             <comment-form :post-id="post.postId" v-if="authtoken"></comment-form>
-            <v-list>
+            <v-list v-for="c in post.Comments" :key="c.id" style="margin: 10px 0">
                 <!--                <div style = "background-color: rgba(0, 0, 0, 0.03)">-->
-
-                <v-list-item v-for="c in post.Comments" :key="c.id" style="margin: 10px 0">
-                    <v-list-item-avatar color="teal">
-                        <span>{{c.email[0]}}</span>
-                    </v-list-item-avatar>
-                    <v-list-item-content class="comment">
-                        <h3>{{c.email}}</h3>
-                        <h6>{{c.createdAt}} </h6>
-                        <div v-if="!c.isDeleted">{{c.comments}}</div>
-                        <div v-else>삭제된 댓글 입니다.</div>
-                    </v-list-item-content>
-                    <v-menu offset-y open-on-hover v-if="c.email === me && !c.isDeleted">
-                        <template v-slot:activator="{ on }">
-                            <v-btn text color="teal" v-on="on">
-                                <v-icon>mdi-dots-horizontal</v-icon>
-                            </v-btn>
-                        </template>
-                        <div style="background: white">
-                            <v-btn dark color="red" @click="openCommentConfirm(c.commentsId)">삭제</v-btn>
-                            <!--                            <v-btn text color="teal" @click="onCommentEditPost">수정</v-btn>-->
-                        </div>
-                    </v-menu>
+                <v-list-item>
+                            <v-list-item-avatar color="teal">
+                                <span>{{c.email[0]}}</span>
+                            </v-list-item-avatar>
+                            <v-list-item-content class="comment">
+                                <h3>{{c.email}}</h3>
+                                <h6>{{c.createdAt}} </h6>
+                                <div v-if="!c.isDeleted">{{c.comments}}</div>
+                                <div v-else>삭제된 댓글 입니다.</div>
+                            </v-list-item-content>
+                            <v-menu offset-y open-on-hover v-if="c.email === me && !c.isDeleted">
+                                <template v-slot:activator="{ on }">
+                                    <v-btn text color="teal" v-on="on">
+                                        <v-icon>mdi-dots-horizontal</v-icon>
+                                    </v-btn>
+                                </template>
+                                <div style="background: white">
+                                    <v-btn dark color="red" @click="openCommentConfirm(c.commentsId)">삭제</v-btn>
+                                    <!--                            <v-btn text color="teal" @click="onCommentEditPost">수정</v-btn>-->
+                                </div>
+                            </v-menu>
                 </v-list-item>
+                        <v-list-item v-for="ch in c.children" :key="c.id" style="margin: 10px 60px">
+                                                            <v-list-item-avatar color="teal">
+                                                                <span>{{ch.email[0]}}</span>
+                                                            </v-list-item-avatar>
+                                                            <v-list-item-content class="comment">
+                                                                <h3>{{ch.email}}</h3>
+                                                                <h6>{{ch.createdAt}} </h6>
+                                                                <div v-if="!ch.isDeleted">{{ch.comments}}</div>
+                                                                <div v-else>삭제된 댓글 입니다.</div>
+                                                            </v-list-item-content>
+                                                            <v-menu offset-y open-on-hover v-if="ch.email === me && !ch.isDeleted">
+                                                                <template v-slot:activator="{ on }">
+                                                                    <v-btn text color="teal" v-on="on">
+                                                                        <v-icon>mdi-dots-horizontal</v-icon>
+                                                                    </v-btn>
+                                                                </template>
+                                                                <div style="background: white">
+                                                                    <v-btn dark color="red" @click="openCommentConfirm(ch.commentsId)">삭제</v-btn>
+                                                                    <!--                            <v-btn text color="teal" @click="onCommentEditPost">수정</v-btn>-->
+                                                                </div>
+                                                            </v-menu>
+
+                                                        </v-list-item>
+
                 <!--                </div>-->
 
             </v-list>

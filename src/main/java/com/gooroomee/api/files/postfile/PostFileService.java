@@ -4,6 +4,7 @@ import com.gooroomee.api.files.exception.FileUploadException;
 import com.gooroomee.api.files.exception.MyFileNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -13,6 +14,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +24,9 @@ public class PostFileService {
 
     @Autowired
     private PostFileRepository postFileRepository;
+
+    @Autowired
+    ModelMapper modelMapper;
 
     @Transactional
     public PostFile storeFile(MultipartFile file) {
@@ -60,4 +66,8 @@ public class PostFileService {
         return postFileRepository.findById(fileId).orElseThrow(()->new MyFileNotFoundException(fileId +" 파일을 찾을 수 없습니다."));
     }
 
+    public PostFileUrlDto getFileUrl(Long postId) {
+        PostFile postFile = this.postFileRepository.findAllByPostId(postId).orElseThrow(() -> new MyFileNotFoundException("파일을 찾을 수 없습니다."));
+        return this.modelMapper.map(postFile, PostFileUrlDto.class);
+    }
 }

@@ -3,11 +3,14 @@ vuex module
  */
 
 
+import throttle from "lodash.throttle";
+
 export const state = () => ({
     me: null,
     authtoken: null,
     followerList: [],
     followingList: [],
+    profile: null,
 });
 
 
@@ -20,11 +23,13 @@ export const mutations = {
     setAuth(state, payload) {
         state.authtoken = payload;
         console.log("state.authtoken == ", state.authtoken);
-        // localStorage.authtoken = authtoken;
     },
     changeEmail(state, payload) {
         state.me.email = payload.email;
-    }
+    },
+    getProfile(state, payload) {
+        state.profile=payload;
+    },
 };
 // 비동기 작업을 위한 actions(복잡한 작업할때 사용)
 export const actions = {
@@ -77,6 +82,29 @@ export const actions = {
                     commit('setMe', res.data.email);
                     // console.log("!!!!!!getmemberinfo_auth" + JSON.stringify(res.data));
                     commit('setAuth', res.data)
+
+                })
+                .catch(err => {
+                    console.log("get axios user" + err)
+                });
+        }
+
+    },
+    getProfile({dispatch, commit}, payload) {
+        if (localStorage.getItem("authtoken")) {
+            let token = localStorage.getItem("authtoken");
+            let config = {
+                headers: {
+                    "authtoken": token,
+                },
+            };
+            this.$axios.get('http://localhost:8080/auth/member/'+payload, config)
+                .then(res => {
+                    console.log("getProfile => ", res.data);
+                    commit('getProfile',res.data.name);
+                    // commit('getProfile',res.data.name);
+                    // commit('setMe', res.data.email);
+                    // commit('setAuth', res.data)
 
                 })
                 .catch(err => {

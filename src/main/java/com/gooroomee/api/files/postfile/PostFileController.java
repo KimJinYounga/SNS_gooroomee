@@ -47,4 +47,10 @@ public class PostFileController {
                 .body(resource);
     }
 
+    @GetMapping("getFilesUrl/{post_id}")
+    public UploadFileResponse getFilesUrl(@PathVariable Long post_id) {
+        PostFileUrlDto postFile = this.postFileService.getFileUrl(post_id);
+        return new UploadFileResponse(postFile.getFile_id(), postFile.getFile_name(), "/fileDownload/"+postFile.getFile_id());
+    }
+
 }

@@ -9,6 +9,7 @@
 <script>
     import PostCard from "../../../components/PostCard";
     export default {
+        layout: 'profile',
         name: "index.vue",
         components: {
             PostCard,

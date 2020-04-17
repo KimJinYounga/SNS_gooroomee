@@ -4,6 +4,7 @@ import com.gooroomee.api.error.exception.BoardNotFoundException;
 import com.gooroomee.api.error.exception.CommentsNotFoundException;
 import com.gooroomee.api.error.exception.PostNotFoundException;
 import com.gooroomee.api.error.exception.MemberNotFoundException;
+import com.gooroomee.api.files.exception.MyFileNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -46,6 +47,12 @@ public class ExceptionHandleController {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ResponseBody
     public ErrorResponse handleNotFoundComment(CommentsNotFoundException exception){
+        return new ErrorResponse(HttpStatus.NOT_FOUND, exception);
+    }
+    @ExceptionHandler(MyFileNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseBody
+    public ErrorResponse handleNotFoundFile(MyFileNotFoundException exception){
         return new ErrorResponse(HttpStatus.NOT_FOUND, exception);
     }
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)

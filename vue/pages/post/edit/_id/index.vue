@@ -1,6 +1,7 @@
 <template>
+    <v-container>
     <v-card style="margin-bottom: 20px">
-        <v-container >
+        <v-container>
             <v-form ref="form" v-model="valid" @submit.prevent="onSubmitForm">
                 <v-text-field
                         v-model="title"
@@ -31,6 +32,7 @@
 
         </v-container>
     </v-card>
+    </v-container>
 </template>
 
 <script>
@@ -50,8 +52,12 @@
             }
         },
         mounted() {
+            this.$store.dispatch('posts/getFiles', {
+                postId: this.$route.params.id
+            });
             this.title = this.post.title;
             this.content = this.post.content;
+
 
         },
         computed: {

@@ -19,4 +19,10 @@ public class UploadFileResponse{
         this.fileType=contentType;
         this.size=size;
     }
+    public UploadFileResponse(String fileId, String fileName, String fileDownloadUri) {
+        this.fileId = fileId;
+        this.fileName=fileName;
+        this.fileDownloadUri=fileDownloadUri;
+    }
+
 }

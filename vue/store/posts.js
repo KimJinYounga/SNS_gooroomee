@@ -75,6 +75,13 @@ export const mutations = {
         }
 
     },
+    getFiles(state, payload) {
+        const postId = parseInt(payload.postId);
+        const index = state.mainPosts.findIndex(v => v.postId === postId);
+        console.log("index => " , index);
+        Vue.set(state.mainPosts[index], 'uploadImages', []);
+        state.mainPosts[index].uploadImages.push(payload);
+    },
 
 
 };
@@ -108,6 +115,24 @@ export const actions = {
 
             });
     },
+    getFiles({commit, dispatch}, payload) {
+        this.$axios.get('http://localhost:8080/getFilesUrl/'+ payload.postId)
+            .then((res) => {
+                    const Obj = JSON.stringify(res.data);
+                    const respObj = JSON.parse(Obj);
+                commit('getFiles',
+                    {
+                        postId: payload.postId,
+                        uri: respObj.fileDownloadUri,
+                        fileName: respObj.fileName,
+                        fileId: respObj.fileId,
+                    });
+
+                })
+            .catch((err) => {
+                console.log("getFiles err ", err);
+            })
+    } ,
     modifyPost({commit, dispatch}, payload) {
         let token = localStorage.getItem("authtoken");
         let config = {
@@ -138,7 +163,7 @@ export const actions = {
                     commentsLength: respObj.commentsLength,
                     isDeleted: respObj.isDeleted,
                 })
-                history.go(-1)
+                // history.go(-1)
             })
             .catch((e) => {
                 console.log("실패!!!!!!!!!" + e.getMessage);
@@ -377,6 +402,7 @@ export const actions = {
                             fileId: respObj.fileId,
                         });
                     console.log("uplaodImages commit 완료")
+
                 } else {
                     console.error(xhr.responseText);
                 }
