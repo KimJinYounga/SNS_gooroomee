@@ -1,6 +1,7 @@
 package com.gooroomee.api.files.postfile;
 
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
@@ -20,7 +21,6 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
-//@CrossOrigin(origins = "*")
 @CrossOrigin(origins = "http://localhost:3000", methods = {RequestMethod.POST, RequestMethod.OPTIONS, RequestMethod.GET}, allowedHeaders = {"Content-Type", "X-Requested-With", "Accept", "Origin", "Access-Control-Request-Method", "Access-Control-Request-Headers"}, exposedHeaders = {"Access-Control-Allow-Origin", "Access-Control-Allow-Credentials"})
 public class PostFileController {
 
@@ -37,12 +37,13 @@ public class PostFileController {
     @GetMapping("/fileDownload/{file_id}")
     public ResponseEntity<InputStreamResource> testDownload(@PathVariable String file_id) throws IOException{
         PostFile postFile = this.postFileService.getFile(file_id);
-        String Path = postFile.getFile_url();
+        String ext = FilenameUtils.getExtension(postFile.getFile_name());
+        String Path = postFile.getFile_url()+"\\"+postFile.getFile_id() +"."+ext;
         File file = new File(Path);
         InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION,
-                        "attachment;filename="+file.getName())
+                        "attachment;filename="+postFile.getFile_name())
                 .contentType(MediaType.parseMediaType(postFile.getFile_type())).contentLength(file.length())
                 .body(resource);
     }
@@ -51,6 +52,12 @@ public class PostFileController {
     public UploadFileResponse getFilesUrl(@PathVariable Long post_id) {
         PostFileUrlDto postFile = this.postFileService.getFileUrl(post_id);
         return new UploadFileResponse(postFile.getFile_id(), postFile.getFile_name(), "/fileDownload/"+postFile.getFile_id());
+    }
+
+    @DeleteMapping("/deleteFile/{file_id}")
+    public ResponseEntity deleteFile(@PathVariable String file_id) {
+        this.postFileService.deleteFile(file_id);
+        return ResponseEntity.ok().build();
     }
 
 }

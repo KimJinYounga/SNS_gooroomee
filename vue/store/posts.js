@@ -31,6 +31,13 @@ export const mutations = {
         // console.log("commentsIndex =>", commentsIndex);
         state.mainPosts[postIndex].Comments[commentsIndex].comments = "삭제된 댓글 입니다.";
     },
+    deleteFile(state, payload) {
+        const postIndex = state.mainPosts.findIndex(v => v.postId === payload.postId);
+        // console.log("postIndex =>", postIndex);
+        const commentsIndex = state.mainPosts[postIndex].uploadImages.findIndex(v => v.fileId === payload.fileId);
+        // console.log("commentsIndex =>", commentsIndex);
+        state.mainPosts[postIndex].uploadImages.splice(commentsIndex, 1);
+    },
     addComment(state, payload) {
         const index = state.mainPosts.findIndex(v => v.postId === payload.postId);
         // console.log("postId", payload.postId);
@@ -163,7 +170,7 @@ export const actions = {
                     commentsLength: respObj.commentsLength,
                     isDeleted: respObj.isDeleted,
                 })
-                // history.go(-1)
+                history.go(-1)
             })
             .catch((e) => {
                 console.log("실패!!!!!!!!!" + e.getMessage);
@@ -219,6 +226,17 @@ export const actions = {
             ;
 
         }
+    },
+    deleteFile({commit},payload) {
+        this.$axios.delete(`http://localhost:8080/deleteFile/${payload.fileId}`)
+            .then((res) => {
+                    commit('deleteFile', payload)
+                }
+            )
+            .catch((err) => {
+                console.log(err)
+            })
+        ;
     },
     addComment({commit}, payload) {
         let token = localStorage.getItem("authtoken");
@@ -298,6 +316,7 @@ export const actions = {
                 const respObj = JSON.parse(Obj);
                 try {
                     const json = respObj._embedded.postList;
+                    console.log("json => ", json);
                     if (payload && payload.reset) {
                         commit('loadPosts', {
                             data: json,
@@ -312,11 +331,11 @@ export const actions = {
                         return;
                     }
                 }catch (e) {
-                    commit('loadPosts', {
-                        data: "",
-                        reset: true,
-                    });
-                    return;
+                    console.log("search Posts error msg=", e)
+                    // commit('loadPosts', {
+                    //     data: respObj._embedded,
+                    // });
+                    // return;
                 }
 
             })

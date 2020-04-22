@@ -1,70 +1,4 @@
-<!--<template>-->
-<!--    <div style="margin-bottom: 20px">-->
-<!--        <v-container>-->
-<!--        <v-card>-->
-<!--            &lt;!&ndash;            <v-image/>&ndash;&gt;-->
-<!--            <v-card-text>-->
-<!--                <nuxt-link :to="`/member/`+email">-->
-<!--                    <v-list-item>-->
-<!--                        <v-list-item-avatar color="teal">-->
-<!--                            <span>{{email[0]}}</span>-->
-<!--                        </v-list-item-avatar>-->
-<!--                        <v-list-item-content>-->
-<!--                            <v-list-item-title> {{email}} </v-list-item-title>-->
-<!--                        </v-list-item-content>-->
-<!--                    </v-list-item>-->
-<!--                </nuxt-link>-->
-<!--                <v-list-item-content>-->
-<!--                    <v-list-item-title>name:  {{Profile}} </v-list-item-title>-->
-<!--                </v-list-item-content>-->
-<!--            </v-card-text>-->
-<!--            <v-card-actions>-->
-<!--                <v-btn text color="orange" @click="fav = !fav">-->
-<!--                    <v-icon>{{heartIcon}}</v-icon>-->
-<!--                </v-btn>-->
-<!--                <v-btn text color="orange" @click="onToggleComment">-->
-<!--                    <v-icon>mdi-comment-outline</v-icon>-->
-<!--                    -->
-<!--                </v-btn>-->
-<!--                -->
-<!--            </v-card-actions>-->
 
-<!--        </v-card>-->
-<!--        </v-container>-->
-<!--    </div>-->
-<!--</template>-->
-
-
-<script>
-    export default {
-        props: {
-
-        },
-        data() {
-            return {
-                email: this.$route.params.id,
-                // name: this.$store.dispatch('user/getProfile', this.email),
-            };
-        },
-        computed: {
-            Profile() {
-                return this.$store.state.user.profile;
-            }
-        },
-        mounted() {
-            this.$store.dispatch('user/getProfile', this.email);
-        },
-        methods: {
-        }
-    }
-</script>
-
-<style scoped>
-    a {
-        color: inherit;
-        text-decoration: none;
-    }
-</style>
 
 
 <template>
@@ -146,3 +80,35 @@
     </v-card>
     </v-container>
 </template>
+
+
+<script>
+    export default {
+        props: {
+
+        },
+        data() {
+            return {
+                email: this.$route.params.id,
+                // name: this.$store.dispatch('user/getProfile', this.email),
+            };
+        },
+        computed: {
+            Profile() {
+                return this.$store.state.user.profile;
+            }
+        },
+        mounted() {
+            this.$store.dispatch('user/getProfile', this.email);
+        },
+        methods: {
+        }
+    }
+</script>
+
+<style scoped>
+    a {
+        color: inherit;
+        text-decoration: none;
+    }
+</style>

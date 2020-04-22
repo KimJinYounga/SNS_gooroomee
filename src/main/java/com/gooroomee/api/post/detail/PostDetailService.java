@@ -5,6 +5,7 @@ import com.gooroomee.api.board.BoardRepository;
 import com.gooroomee.api.error.exception.BoardNotFoundException;
 import com.gooroomee.api.error.exception.MemberNotFoundException;
 import com.gooroomee.api.error.exception.PostNotFoundException;
+import com.gooroomee.api.files.exception.MyFileNotFoundException;
 import com.gooroomee.api.files.postfile.PostFile;
 import com.gooroomee.api.files.postfile.PostFileRepository;
 import com.gooroomee.api.member.MemberRepository;
@@ -51,7 +52,9 @@ public class PostDetailService {
         if (postDetailDto.getFileId() == null) {
             return savePost;
         }
-        PostFile file = this.postFileRepository.findById(postDetailDto.getFileId()).orElseThrow();
+        System.out.println("FileId --< ##################");
+                System.out.println(postDetailDto.getFileId());
+        PostFile file = this.postFileRepository.findById(postDetailDto.getFileId()).orElseThrow(() -> new MyFileNotFoundException("파일을 찾을 수 없습니다."));
         file.setPostId(post.getPostId());
         this.postFileRepository.save(file);
         return savePost;

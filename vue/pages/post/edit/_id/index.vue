@@ -26,7 +26,7 @@
             </v-form>
             <div v-for="f in post.uploadImages" >
                 <a v-bind:href="downloadUri(f.uri)" >{{f.fileName}}</a>
-                <button @click="onRemoveImage(post.uploadImages)" type="button"><v-icon>mdi-close-thick</v-icon></button>
+                <button @click="onRemoveImage(f.fileId)" type="button"><v-icon>mdi-close-thick</v-icon></button>
             </div>
 
 
@@ -80,7 +80,7 @@
             },
             onSubmitForm() {
                 let fileId;
-                if (this.post.uploadImages === undefined) {
+                if (this.post.uploadImages[0] === undefined) {
                     fileId=undefined;
                 }
                 else{
@@ -127,6 +127,12 @@
                 console.log("boundary => ", imageFormData);
                 this.$store.dispatch('posts/uploadImages', {
                     file: imageFormData,
+                    postId: this.post.postId,
+                });
+            },
+            onRemoveImage(fileId) {
+                this.$store.dispatch('posts/deleteFile', {
+                    fileId: fileId,
                     postId: this.post.postId,
                 });
             },

@@ -50,10 +50,10 @@ public class ExceptionHandleController {
         return new ErrorResponse(HttpStatus.NOT_FOUND, exception);
     }
     @ExceptionHandler(MyFileNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public ErrorResponse handleNotFoundFile(MyFileNotFoundException exception){
-        return new ErrorResponse(HttpStatus.NOT_FOUND, exception);
+        return new ErrorResponse(HttpStatus.OK, exception);
     }
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
