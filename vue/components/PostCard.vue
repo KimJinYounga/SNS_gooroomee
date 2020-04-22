@@ -213,6 +213,22 @@
                 return this.fav ? 'mdi-heart' : 'mdi-heart-outline';
             },
             profileImage() {
+                // const profile = this.post._links;
+                // const Obj = JSON.stringify(profile);
+                // const respObj = JSON.parse(Obj);
+                // const Obj2 = JSON.stringify(respObj.profileImage);
+                // if (Obj2 !== undefined) {
+                //     const result = JSON.parse(Obj2);
+                //     return "http://localhost:8080"+result.href;
+                // }
+                // const profile = this.post._links;
+                // const Obj = JSON.stringify(profile);
+                // const respObj = JSON.parse(Obj);
+                // const image = respObj.profileImage
+                // if (image !== undefined) {
+                //     return "http://localhost:8080"+image.href;
+                // }
+                // return "https://hubbee-s3.s3.amazonaws.com/static/images/default/default_profile.jpg";
                 const profile = this.post._links.profileImage;
                 if (profile !== undefined) {
                     return "http://localhost:8080"+profile.href;

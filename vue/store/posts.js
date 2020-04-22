@@ -106,8 +106,9 @@ export const actions = {
             .then((res) => {
                 const Obj = JSON.stringify(res.data);
                 const respObj = JSON.parse(Obj);
-                console.log("성공!!!!!!!!!" + respObj.postId);
+                console.log("성공!!!!!!!!!" + JSON.stringify(respObj));
                 commit('addMainPost', {
+                    _links: respObj._links,
                     postId: respObj.postId,
                     email: respObj.email,
                     content: respObj.content,
@@ -118,7 +119,7 @@ export const actions = {
                 })
             })
             .catch((e) => {
-                console.log("실패!!!!!!!!!" + e.getMessage);
+                console.log("실패!!!!!!!!!" + e);
 
             });
     },
@@ -423,7 +424,9 @@ export const actions = {
                     console.log("uplaodImages commit 완료")
 
                 } else {
+
                     console.error(xhr.responseText);
+                    alert("파일 전송 용량 초과");
                 }
             }
         };

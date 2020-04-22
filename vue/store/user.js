@@ -4,6 +4,7 @@ vuex module
 
 
 import throttle from "lodash.throttle";
+import Vue from "../nuxt.config";
 
 export const state = () => ({
     me: null,
@@ -11,6 +12,7 @@ export const state = () => ({
     followerList: [],
     followingList: [],
     profile: null,
+    memberName: null,
 });
 
 
@@ -28,11 +30,15 @@ export const mutations = {
         state.me.email = payload.email;
     },
     getProfile(state, payload) {
+        // Vue.set(state.profile, 'name', payload.name );
         state.profile=payload;
     },
     changeProfileImage(state, payload) {
         state.profile = payload;
-    }
+    },
+    getMemberName(state, payload) {
+      state.memberName = payload;
+    },
 };
 // 비동기 작업을 위한 actions(복잡한 작업할때 사용)
 export const actions = {
@@ -104,11 +110,35 @@ export const actions = {
             this.$axios.get('http://localhost:8080/auth/member/'+payload, config)
                 .then(res => {
                     console.log("getProfile => ", res.data);
+                    // commit('getProfile',res.data.name);
                     commit('getProfile',res.data.name);
                     // commit('getProfile',res.data.name);
                     // commit('setMe', res.data.email);
                     // commit('setAuth', res.data)
+                })
+                .catch(err => {
+                    console.log("get axios user" + err)
+                });
+        }
 
+    },
+    getMemberName({dispatch, commit}, payload) {
+        if (localStorage.getItem("authtoken")) {
+            let token = localStorage.getItem("authtoken");
+            let config = {
+                headers: {
+                    "authtoken": token,
+                },
+            };
+            this.$axios.get('http://localhost:8080/auth/member/'+payload, config)
+                .then(res => {
+                    console.log("getProfile => ", res.data);
+                    // commit('getProfile',res.data.name);
+                    commit('getMemberName',res.data.name);
+                    // commit('getProfile',res.data.name);
+                    // commit('setMe', res.data.email);
+                    // commit('setAuth', res.data)
+                    getMemberName
                 })
                 .catch(err => {
                     console.log("get axios user" + err)

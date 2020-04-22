@@ -8,7 +8,7 @@
             class="mx-auto"
     >
         <v-img
-                src="http://localhost:8080/fileDownload/1a9974e0-5507-47ee-9a52-6e6444f3a87f"
+                :src="profilePath"
                 height="300px"
                 dark
         >
@@ -94,12 +94,21 @@
             };
         },
         computed: {
+            profilePath() {
+                if (this.$store.state.user.profile === null) {
+                    return "https://d3n24gmmpz5ort.cloudfront.net/2019/09/1-35.jpg";
+                }
+                return "http://localhost:8080"+this.$store.state.user.profile;
+            },
             Profile() {
-                return this.$store.state.user.profile;
+                return this.$store.state.user.memberName;
             }
         },
         mounted() {
-            this.$store.dispatch('user/getProfile', this.email);
+            this.$store.dispatch('user/getProfileImage', {
+                email: this.email,
+            });
+            this.$store.dispatch('user/getMemberName', this.email);
         },
         methods: {
         }

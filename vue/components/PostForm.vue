@@ -25,7 +25,7 @@
 <!--                <a v-bind:href="downloadUri">{{post.uploadImages}}</a>-->
 
             </v-form>
-            <div v-for="f in post.uploadImages" >
+            <div v-for="f in post.uploadImages" ref="imageSpace">
                 <a v-bind:href="downloadUri(f.uri)" >{{f.fileName}}</a>
                 <button @click="onRemoveImage(post.uploadImages)" type="button"><v-icon>mdi-close-thick</v-icon></button>
             </div>
@@ -121,7 +121,11 @@
                 this.$store.dispatch('posts/uploadImages', {
                     file: imageFormData,
                     postId: null,
-                });
+                })
+                .then(() => {
+                    this.$refs.imageSpace.hide();
+                })
+                ;
             },
         },
     };
