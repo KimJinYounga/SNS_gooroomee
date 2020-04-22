@@ -3,8 +3,8 @@
         <v-card>
             <!--            <v-image/>-->
             <v-card-text>
-                <nuxt-link :to="`/member/`+post.email">
-                    <v-list-item>
+                <v-list-item>
+                    <nuxt-link :to="`/member/`+post.email">
                         <v-list-item-avatar color="teal">
                             <v-img
                                     :src="profileImage"
@@ -12,12 +12,19 @@
                             />
                             <!--                            <span>{{ post.email[0] }}</span>-->
                         </v-list-item-avatar>
-                        <v-list-item-content>
-                            <v-list-item-title>{{ post.email }}</v-list-item-title>
-                            <v-list-item-subtitle>{{ post.createdAt}}</v-list-item-subtitle>
-                        </v-list-item-content>
-                    </v-list-item>
-                </nuxt-link>
+                    </nuxt-link>
+                    <v-list-item-content>
+
+                        <v-list-item-title>
+                            <nuxt-link :to="`/member/`+post.email">
+                                {{ post.email }}
+                            </nuxt-link>
+                        </v-list-item-title>
+                        <v-list-item-subtitle>{{ post.createdAt}}</v-list-item-subtitle>
+                    </v-list-item-content>
+                    <v-icon>mdi-paperclip</v-icon>
+                </v-list-item>
+
                 <nuxt-link :to="'/post/' + post.postId">
                     <v-list-item v-if="!post.isDeleted">
                         <p> {{ post.title }}</p>
@@ -229,11 +236,15 @@
                 //     return "http://localhost:8080"+image.href;
                 // }
                 // return "https://hubbee-s3.s3.amazonaws.com/static/images/default/default_profile.jpg";
-                const profile = this.post._links.profileImage;
-                if (profile !== undefined) {
-                    return "http://localhost:8080"+profile.href;
+                try {
+                    const profile = this.post._links.profileImage;
+                    if (profile !== undefined) {
+                        return "http://localhost:8080" + profile.href;
+                    }
+                }catch(e) {
+                    return "https://hubbee-s3.s3.amazonaws.com/static/images/default/default_profile.jpg";
                 }
-                return "https://hubbee-s3.s3.amazonaws.com/static/images/default/default_profile.jpg";
+            return "https://hubbee-s3.s3.amazonaws.com/static/images/default/default_profile.jpg";
 
             }
             // liked() {

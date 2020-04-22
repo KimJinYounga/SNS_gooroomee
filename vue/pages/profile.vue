@@ -133,7 +133,7 @@
         computed: {
             profilePath() {
                 if (this.$store.state.user.profile === null) {
-                    return "https://d3n24gmmpz5ort.cloudfront.net/2019/09/1-35.jpg";
+                    return "https://hubbee-s3.s3.amazonaws.com/static/images/default/default_profile.jpg";
                 }
                 return "http://localhost:8080"+this.$store.state.user.profile;
             }
