@@ -20,7 +20,7 @@
                 />
                 <v-btn type="submit" color="green" absolute right>수정</v-btn>
                 <input ref="imageInput" type="file" multiple hidden @change="onChangeImages">
-                <v-btn @click="onClickImageUpload" type="button">이미지 업로드</v-btn>
+                <v-btn @click="onClickImageUpload" type="button">파일 업로드</v-btn>
 <!--                <v-list-item v-for="f in post.uploadImages" :key="f.id" style="margin: 10px 0">-->
 
             </v-form>

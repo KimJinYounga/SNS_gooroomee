@@ -19,9 +19,9 @@
                         :rules="[v => !!v.trim() || '내용을 입력하세요.']"
                         @input="onChangeTextarea"
                 />
-                <v-btn type="submit" color="green" absolute right>짹짹</v-btn>
+                <v-btn type="submit" color="green" absolute right>전송</v-btn>
                 <input ref="imageInput" type="file" multiple hidden @change="onChangeImages">
-                <v-btn @click="onClickImageUpload" type="button">이미지 업로드</v-btn>
+                <v-btn @click="onClickImageUpload" type="button">파일 업로드</v-btn>
 <!--                <a v-bind:href="downloadUri">{{post.uploadImages}}</a>-->
 
             </v-form>

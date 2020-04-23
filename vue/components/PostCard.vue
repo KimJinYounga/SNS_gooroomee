@@ -87,7 +87,7 @@
                         </template>
                         <div style="background: white">
                             <v-btn dark color="red" @click="openCommentConfirm(c.commentsId)">삭제</v-btn>
-                            <!--                            <v-btn text color="teal" @click="onCommentEditPost">수정</v-btn>-->
+                            <v-btn text color="teal" @click="applyComment(c.commentsId)">답글</v-btn>
                         </div>
                     </v-menu>
                 </v-list-item>
@@ -245,10 +245,10 @@
                     if (profile !== undefined) {
                         return "http://localhost:8080" + profile.href;
                     }
-                }catch(e) {
+                } catch (e) {
                     return "https://hubbee-s3.s3.amazonaws.com/static/images/default/default_profile.jpg";
                 }
-            return "https://hubbee-s3.s3.amazonaws.com/static/images/default/default_profile.jpg";
+                return "https://hubbee-s3.s3.amazonaws.com/static/images/default/default_profile.jpg";
 
             }
             // liked() {
@@ -278,6 +278,9 @@
             openCommentConfirm(commentsId) {
                 this.commentdialog = true;
                 this.commentsId = commentsId;
+            },
+            applyComment(commentsId) {
+
             },
             commentRemove() {
                 // console.log(this.post.Comments.commentsId);
