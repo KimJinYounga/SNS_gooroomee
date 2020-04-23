@@ -22,7 +22,11 @@
                         </v-list-item-title>
                         <v-list-item-subtitle>{{ post.createdAt}}</v-list-item-subtitle>
                     </v-list-item-content>
-                    <v-icon>mdi-paperclip</v-icon>
+                    <div v-if="post.fileCnt>0">
+                        <v-icon>mdi-paperclip</v-icon>
+                        {{ post.fileCnt }}
+                    </div>
+
                 </v-list-item>
 
                 <nuxt-link :to="'/post/' + post.postId">

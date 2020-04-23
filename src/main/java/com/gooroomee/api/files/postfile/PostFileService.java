@@ -2,6 +2,8 @@ package com.gooroomee.api.files.postfile;
 
 import com.gooroomee.api.files.exception.FileUploadException;
 import com.gooroomee.api.files.exception.MyFileNotFoundException;
+import com.gooroomee.api.post.Post;
+import com.gooroomee.api.post.PostRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
@@ -28,6 +30,8 @@ public class PostFileService {
     private PostFileRepository postFileRepository;
 
     @Autowired
+    PostRepository postRepository;
+    @Autowired
     ModelMapper modelMapper;
 
     @Transactional
@@ -47,7 +51,7 @@ public class PostFileService {
         PostFile savedFile = postFileRepository.save(postFile);
         String ext = FilenameUtils.getExtension(savedFile.getFile_name());
         try (
-                FileOutputStream fos = new FileOutputStream(test_file_path + savedFile.getFile_id() +"."+ ext);
+                FileOutputStream fos = new FileOutputStream(test_file_path + savedFile.getFile_id() + "." + ext);
                 InputStream is = file.getInputStream();) {
 
             int readCount = 0;
@@ -85,6 +89,10 @@ public class PostFileService {
             file.delete();
         }
         this.postFileRepository.delete(postFile);
+        Optional<Post> byId = this.postRepository.findById(postFile.getPostId());
+        Post post = byId.get();
+        post.setFileCnt(post.getFileCnt() - 1);
+        this.postRepository.save(post);
     }
 
 

@@ -49,15 +49,16 @@ public class PostDetailService {
         post.setCommentsLength((long) 0);
         post.setIsDeleted(Boolean.FALSE);
         Post savePost = this.postRepository.save(post);
+
         if (postDetailDto.getFileId() == null) {
             return savePost;
         }
-        System.out.println("FileId --< ##################");
-                System.out.println(postDetailDto.getFileId());
         PostFile file = this.postFileRepository.findById(postDetailDto.getFileId()).orElseThrow(() -> new MyFileNotFoundException("파일을 찾을 수 없습니다."));
         file.setPostId(post.getPostId());
         this.postFileRepository.save(file);
-        return savePost;
+        savePost.setFileCnt(this.postFileRepository.countByPostId(savePost.getPostId()));
+        Post savedPost = this.postRepository.save(savePost);
+        return savedPost;
     }
 
     @Transactional
@@ -66,15 +67,19 @@ public class PostDetailService {
         postDetailDto.toEntity(post);
         this.postRepository.save(post);
 
-        PostDetailDto returnValue = this.modelMapper.map(post, PostDetailDto.class);
         if (postDetailDto.getFileId() == null) {
-            return returnValue;
+            return this.modelMapper.map(post, PostDetailDto.class);
         }
         else {
             PostFile file = this.postFileRepository.findById(postDetailDto.getFileId()).orElseThrow();
             file.setPostId(post.getPostId());
             this.postFileRepository.save(file);
         }
+        post.setFileCnt(this.postFileRepository.countByPostId(post.getPostId()));
+        this.postRepository.save(post);
+
+        PostDetailDto returnValue = this.modelMapper.map(post, PostDetailDto.class);
+
         return returnValue;
     }
 

@@ -96,6 +96,7 @@
                             this.hideDetails = false;
                             this.success = true;
                             this.successMessages = '게시글 등록 성공!';
+                            this.post.uploadImages = [];
                         })
                         .catch(() => {
 

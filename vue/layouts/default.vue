@@ -33,10 +33,10 @@
                             </v-list-item>
                         </v-list>
                     </v-menu>
-                    <v-btn text nuxt to="/profile" :style="{ display: 'flex', alignItems: 'center' }">
+                    <v-btn v-if="authtoken" text nuxt to="/profile" :style="{ display: 'flex', alignItems: 'center' }">
                         <div>프로필</div>
                     </v-btn>
-                    <v-btn text nuxt to="/signup" :style="{ display: 'flex', alignItems: 'center' }">
+                    <v-btn v-if="!authtoken" text nuxt to="/signup" :style="{ display: 'flex', alignItems: 'center' }">
                         <div>회원가입</div>
                     </v-btn>
                 </v-toolbar-items>
@@ -69,7 +69,11 @@
         mounted() {
         },
 
-        computed: {},
+        computed: {
+            authtoken() {
+                return this.$store.state.user.authtoken;
+            },
+        },
         methods: {
             onSearch() {
                 this.$router.push({

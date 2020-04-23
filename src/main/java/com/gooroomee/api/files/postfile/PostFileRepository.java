@@ -9,4 +9,5 @@ import java.util.Optional;
 @Repository
 public interface PostFileRepository extends JpaRepository<PostFile, String> {
     Optional<PostFile> findAllByPostId(Long postId);
+    long countByPostId(Long postId);
 }

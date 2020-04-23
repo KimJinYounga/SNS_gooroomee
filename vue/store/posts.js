@@ -22,6 +22,7 @@ export const mutations = {
     removeMainPost(state, payload) {
         const index = state.mainPosts.findIndex(v => v.postId === payload.postId);
         state.mainPosts[index].title = "삭제된 게시글 입니다.";
+        state.mainPosts[index].fileCnt -=1;
         // state.mainPosts.splice(index, 1);
     },
     removeComment(state, payload) {
@@ -116,6 +117,7 @@ export const actions = {
                     createdAt: respObj.createdAt,
                     commentsLength: respObj.commentsLength,
                     isDeleted: respObj.isDeleted,
+                    fileCnt: respObj.fileCnt,
                 })
             })
             .catch((e) => {

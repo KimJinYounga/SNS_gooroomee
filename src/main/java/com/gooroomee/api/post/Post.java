@@ -40,6 +40,11 @@ public class Post extends CommonDateEntity {
     @Setter
     private Boolean isDeleted = Boolean.FALSE;
 
+    @Builder.Default
+    @Column(name="fileCnt")
+    @Setter
+    private Long fileCnt = (long)0;
+
     @ManyToOne
     @JoinColumn(name = "member_id")
     @Setter

@@ -17,13 +17,13 @@
 
                     <v-spacer></v-spacer>
 
-                    <v-btn dark icon class="mr-4">
-                        <v-icon>mdi-pencil</v-icon>
-                    </v-btn>
+<!--                    <v-btn dark icon class="mr-4">-->
+<!--                        <v-icon>mdi-pencil</v-icon>-->
+<!--                    </v-btn>-->
 
-                    <v-btn dark icon>
-                        <v-icon>mdi-dots-vertical</v-icon>
-                    </v-btn>
+<!--                    <v-btn dark icon>-->
+<!--                        <v-icon>mdi-dots-vertical</v-icon>-->
+<!--                    </v-btn>-->
                 </v-card-title>
 
                 <v-spacer></v-spacer>
