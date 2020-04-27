@@ -4,6 +4,7 @@ import throttle from 'lodash.throttle';
 export const state = () => ({
     mainPosts: [],
     hasMorePost: true,
+    Likes:[],
 });
 
 
@@ -68,7 +69,23 @@ export const mutations = {
         // console.log("CommentsLength", payload.CommentsLength);
         Vue.set(state.mainPosts[index], 'CommentsLength', payload.CommentsLength);
     },
-    uploadImages(state, payload) {
+    likeList(state, payload) {
+        const index = state.mainPosts.findIndex(v => v.postId === payload.postId);
+        Vue.set(state.mainPosts[index], 'Likes', payload.data);
+        Vue.set(state.mainPosts[index], 'LikesLength', payload.length);
+    },
+    unlikePost(state, payload) {
+        const index = state.mainPosts.findIndex(v => v.postId === payload.postId);
+        const emailIndex = state.mainPosts[index].Likes.findIndex(v => v.email === payload.email);
+        state.mainPosts[index].Likes.slice(emailIndex,1);
+    },
+    likePost(state, payload) {
+        const index = state.mainPosts.findIndex(v => v.postId === payload.postId);
+        state.mainPosts[index].Likes.push({
+            email: payload.email,
+        });
+    },
+   uploadImages(state, payload) {
         if (payload.postId !== null) {
             const index = state.mainPosts.findIndex(v => v.postId === payload.postId);
             console.log(payload);
@@ -285,6 +302,7 @@ export const actions = {
                 const Obj = JSON.stringify(res.data);
                 const respObj = JSON.parse(Obj);
                 const json = respObj._embedded.postList;
+                console.log(respObj._embedded);
                 if (payload && payload.reset) {
                     commit('loadPosts', {
                         data: json,
@@ -400,6 +418,38 @@ export const actions = {
             })
             .catch((err) => {
                 console.log("comments 실패", err)
+            })
+    },
+    likeList({commit}, payload) {
+        this.$axios.get(`http://localhost:8080/like/list/${payload.postId}`)
+            .then((res) => {
+                console.log("likeList length => ", res.data.length);
+                commit('likeList',
+                    {
+                        postId: payload.postId,
+                        data: res.data,
+                        length: res.data.length,
+                    });
+            })
+    },
+    unlikePost({commit}, payload) {
+        this.$axios.post(`http://localhost:8080/like/${payload.postId}`)
+            .then((res) => {
+                console.log("unlike post ", res.data);
+                commit('unlikePost', {
+                    postId: payload.postId,
+                    email: res.data.email,
+                })
+            })
+    },
+    likePost({commit}, payload) {
+        this.$axios.post(`http://localhost:8080/like/${payload.postId}`)
+            .then((res) => {
+                console.log("like post ", res.data);
+                commit('likePost', {
+                    postId: payload.postId,
+                    email: res.data.email,
+                })
             })
     },
     uploadImages({commit}, payload) {

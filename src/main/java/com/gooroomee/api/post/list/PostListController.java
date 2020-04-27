@@ -44,5 +44,4 @@ public class PostListController {
         pagedResources.add(linkTo(PostListController.class).withRel("posts-list"));
         return ResponseEntity.ok(pagedResources);
     }
-
 }

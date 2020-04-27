@@ -41,9 +41,23 @@
             </v-card-text>
             <div v-if="!post.isDeleted">
                 <v-card-actions>
-                    <v-btn text color="orange" @click="fav = !fav">
+                    <v-menu offset-y open-on-hover>
+                    <template v-slot:activator="{ on }">
+                    <v-btn text color="orange" @click="onClickHeart" v-on="on">
                         <v-icon>{{heartIcon}}</v-icon>
+                        {{post.LikesLength}}
                     </v-btn>
+                    </template>
+                    <div style="background: white">
+                        <v-list v-for="l in post.Likes" :key="l.id" style="margin: 0 10px">
+                                <span>
+                                    <nuxt-link :to="`/member/`+l.email">
+                                        {{l.email}}
+                                    </nuxt-link>
+                                </span>
+                        </v-list>
+                    </div>
+                    </v-menu>
                     <v-btn text color="orange" @click="onToggleComment">
                         <v-icon>mdi-comment-outline</v-icon>
                         {{ post.commentsLength}}
@@ -220,26 +234,14 @@
             authtoken() {
                 return this.$store.state.user.authtoken;
             },
+            liked() {
+                const me = this.$store.state.user.me;
+                return !!(this.post.Likes || []).find(v =>  v.email ===  (me))
+            },
             heartIcon() {
-                return this.fav ? 'mdi-heart' : 'mdi-heart-outline';
+                return this.liked ? 'mdi-heart' : 'mdi-heart-outline';
             },
             profileImage() {
-                // const profile = this.post._links;
-                // const Obj = JSON.stringify(profile);
-                // const respObj = JSON.parse(Obj);
-                // const Obj2 = JSON.stringify(respObj.profileImage);
-                // if (Obj2 !== undefined) {
-                //     const result = JSON.parse(Obj2);
-                //     return "http://localhost:8080"+result.href;
-                // }
-                // const profile = this.post._links;
-                // const Obj = JSON.stringify(profile);
-                // const respObj = JSON.parse(Obj);
-                // const image = respObj.profileImage
-                // if (image !== undefined) {
-                //     return "http://localhost:8080"+image.href;
-                // }
-                // return "https://hubbee-s3.s3.amazonaws.com/static/images/default/default_profile.jpg";
                 try {
                     const profile = this.post._links.profileImage;
                     if (profile !== undefined) {
@@ -251,16 +253,25 @@
                 return "https://hubbee-s3.s3.amazonaws.com/static/images/default/default_profile.jpg";
 
             }
-            // liked() {
-            //     const me = this.$store.state.users.me;
-            //     return !!(this.post.Likers || []).find(v => v.id === (me && me.id));
-            // },
+        },
+        mounted() {
+            this.$store.dispatch('posts/likeList', {
+                postId: this.post.postId,
+            });
         },
         methods: {
             onClickHeart() {
                 if (!this.me) {
                     return alert('로그인이 필요합니다.');
                 }
+                if (this.liked) {
+                    return this.$store.dispatch('posts/unlikePost', {
+                        postId: this.post.postId,
+                    });
+                }
+                return this.$store.dispatch('posts/likePost', {
+                    postId: this.post.postId,
+                });
             },
             ok() {
                 this.$store.dispatch('posts/remove', {
