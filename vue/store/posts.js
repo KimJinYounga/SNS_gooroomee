@@ -4,7 +4,6 @@ import throttle from 'lodash.throttle';
 export const state = () => ({
     mainPosts: [],
     hasMorePost: true,
-    Likes:[],
 });
 
 
@@ -77,13 +76,17 @@ export const mutations = {
     unlikePost(state, payload) {
         const index = state.mainPosts.findIndex(v => v.postId === payload.postId);
         const emailIndex = state.mainPosts[index].Likes.findIndex(v => v.email === payload.email);
-        state.mainPosts[index].Likes.slice(emailIndex,1);
+        console.log("payload.email _> ", payload.email)
+        console.log("emailIndex => ", emailIndex);
+        state.mainPosts[index].Likes.splice(emailIndex,1);
+        state.mainPosts[index].LikesLength -= 1;
     },
     likePost(state, payload) {
         const index = state.mainPosts.findIndex(v => v.postId === payload.postId);
         state.mainPosts[index].Likes.push({
             email: payload.email,
         });
+        state.mainPosts[index].LikesLength += 1;
     },
    uploadImages(state, payload) {
         if (payload.postId !== null) {
@@ -421,6 +424,7 @@ export const actions = {
             })
     },
     likeList({commit}, payload) {
+
         this.$axios.get(`http://localhost:8080/like/list/${payload.postId}`)
             .then((res) => {
                 console.log("likeList length => ", res.data.length);
@@ -433,7 +437,13 @@ export const actions = {
             })
     },
     unlikePost({commit}, payload) {
-        this.$axios.post(`http://localhost:8080/like/${payload.postId}`)
+        let token = localStorage.getItem("authtoken");
+        let config = {
+            headers: {
+                "authtoken": token,
+            },
+        };
+        this.$axios.post(`http://localhost:8080/like/${payload.postId}`,'', config)
             .then((res) => {
                 console.log("unlike post ", res.data);
                 commit('unlikePost', {
@@ -443,7 +453,13 @@ export const actions = {
             })
     },
     likePost({commit}, payload) {
-        this.$axios.post(`http://localhost:8080/like/${payload.postId}`)
+        let token = localStorage.getItem("authtoken");
+        let config = {
+            headers: {
+                "authtoken": token,
+            },
+        };
+        this.$axios.post(`http://localhost:8080/like/${payload.postId}`, '',config)
             .then((res) => {
                 console.log("like post ", res.data);
                 commit('likePost', {
