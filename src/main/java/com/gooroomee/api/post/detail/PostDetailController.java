@@ -55,6 +55,7 @@ public class PostDetailController {
         return ResponseEntity.ok(postResource);
     }
 
+
     @PostMapping("/{board_type}")
     public ResponseEntity createPost(@RequestBody @Valid PostDetailDto postDetailDto,
                                      @PathVariable(name = "board_type") String boardType,

@@ -4,6 +4,7 @@ import com.gooroomee.api.board.Board;
 import com.gooroomee.api.board.BoardRepository;
 import com.gooroomee.api.error.exception.BoardNotFoundException;
 import com.gooroomee.api.error.exception.MemberNotFoundException;
+import com.gooroomee.api.error.exception.PostDeletedException;
 import com.gooroomee.api.error.exception.PostNotFoundException;
 import com.gooroomee.api.files.exception.MyFileNotFoundException;
 import com.gooroomee.api.files.postfile.PostFile;
@@ -17,6 +18,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -35,6 +37,7 @@ public class PostDetailService {
     @Transactional
     public PostDetailDto getPost(Long post_id) {
         Post post = this.postRepository.findById(post_id).orElseThrow(PostNotFoundException::new);
+        this.postRepository.findByPostIdAndIsDeleted(post_id, false).orElseThrow(() -> new PostDeletedException("삭제된 게시글입니다."));
         PostDetailDto postDetailDto = this.modelMapper.map(post, PostDetailDto.class);
         return postDetailDto;
     }

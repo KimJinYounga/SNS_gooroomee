@@ -79,14 +79,15 @@ export const mutations = {
         console.log("payload.email _> ", payload.email)
         console.log("emailIndex => ", emailIndex);
         state.mainPosts[index].Likes.splice(emailIndex,1);
-        state.mainPosts[index].LikesLength -= 1;
+        state.mainPosts[index].LikesLength = Object.keys(state.mainPosts[index].Likes).length;
+        // state.mainPosts[index].LikesLength -= 1;
     },
     likePost(state, payload) {
         const index = state.mainPosts.findIndex(v => v.postId === payload.postId);
         state.mainPosts[index].Likes.push({
             email: payload.email,
         });
-        state.mainPosts[index].LikesLength += 1;
+        state.mainPosts[index].LikesLength = Object.keys(state.mainPosts[index].Likes).length;
     },
    uploadImages(state, payload) {
         if (payload.postId !== null) {
@@ -128,6 +129,9 @@ export const actions = {
                 const Obj = JSON.stringify(res.data);
                 const respObj = JSON.parse(Obj);
                 console.log("성공!!!!!!!!!" + JSON.stringify(respObj));
+                dispatch('loadPosts', {
+                    reset: true,
+                });
                 commit('addMainPost', {
                     _links: respObj._links,
                     postId: respObj.postId,
@@ -327,7 +331,22 @@ export const actions = {
 
 
     }, 2000),
+    loadPost({commit, dispatch},payload) {
+        this.$axios.get(`http://localhost:8080/post/${payload.postId}`)
+            .then((res) => {
+                    // commit('loadPost', payload);
+                }
+            )
+            .catch((err) => {
+                alert("삭제된 게시글 입니다.")
+                dispatch('loadPosts', {
+                    reset: true,
+                });
 
+                console.log(err)
+            })
+        ;
+    },
     searchPosts: throttle(async function ({commit, state}, payload) {
         pagination += 1;
         if (payload && payload.reset)
@@ -425,6 +444,7 @@ export const actions = {
     },
     likeList({commit}, payload) {
 
+
         this.$axios.get(`http://localhost:8080/like/list/${payload.postId}`)
             .then((res) => {
                 console.log("likeList length => ", res.data.length);
@@ -436,13 +456,19 @@ export const actions = {
                     });
             })
     },
-    unlikePost({commit}, payload) {
+    unlikePost({commit, dispatch}, payload) {
+        dispatch('loadPost', {
+            postId: payload.postId,
+        });
         let token = localStorage.getItem("authtoken");
         let config = {
             headers: {
                 "authtoken": token,
             },
         };
+        dispatch('likeList', {
+            postId: payload.postId,
+        });
         this.$axios.post(`http://localhost:8080/like/${payload.postId}`,'', config)
             .then((res) => {
                 console.log("unlike post ", res.data);
@@ -452,13 +478,19 @@ export const actions = {
                 })
             })
     },
-    likePost({commit}, payload) {
+    likePost({commit, dispatch}, payload) {
+        dispatch('loadPost', {
+            postId: payload.postId,
+        });
         let token = localStorage.getItem("authtoken");
         let config = {
             headers: {
                 "authtoken": token,
             },
         };
+        dispatch('likeList', {
+            postId: payload.postId,
+        });
         this.$axios.post(`http://localhost:8080/like/${payload.postId}`, '',config)
             .then((res) => {
                 console.log("like post ", res.data);
@@ -481,6 +513,7 @@ export const actions = {
                     console.log(respObj)
                     xhr2.open('GET', 'http://localhost:8080' + respObj.fileDownloadUri);
                     xhr2.send()
+                    console.log(" !!!!!!!!!!!!!!!###############")
                     console.log("uplaodImages commit 준비")
                     commit('uploadImages',
                         {

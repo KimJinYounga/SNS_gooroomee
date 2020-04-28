@@ -1,9 +1,6 @@
 package com.gooroomee.api.error;
 
-import com.gooroomee.api.error.exception.BoardNotFoundException;
-import com.gooroomee.api.error.exception.CommentsNotFoundException;
-import com.gooroomee.api.error.exception.PostNotFoundException;
-import com.gooroomee.api.error.exception.MemberNotFoundException;
+import com.gooroomee.api.error.exception.*;
 import com.gooroomee.api.files.exception.MyFileNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,6 +51,12 @@ public class ExceptionHandleController {
     @ResponseBody
     public ErrorResponse handleNotFoundFile(MyFileNotFoundException exception){
         return new ErrorResponse(HttpStatus.OK, exception);
+    }
+    @ExceptionHandler(PostDeletedException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseBody
+    public ErrorResponse handleDeletedPost(PostDeletedException exception){
+        return new ErrorResponse(HttpStatus.NOT_FOUND, exception);
     }
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)

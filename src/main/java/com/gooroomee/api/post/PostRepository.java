@@ -17,4 +17,5 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     Post findPostByPostId(Long postId);
     @Query(value = "SELECT p FROM Post p WHERE p.email LIKE %?1% OR p.content like %?1% OR p.title LIKE %?1%")
     Page<Post> findAllByEmailAndContent(String email, Pageable pageable);
+    Optional<Post> findByPostIdAndIsDeleted(Long post_id, Boolean deleted);
 }
