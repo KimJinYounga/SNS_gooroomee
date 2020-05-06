@@ -1,7 +1,6 @@
 <template>
     <div style="margin-bottom: 20px">
         <v-card>
-            <!--            <v-image/>-->
             <v-card-text>
                 <v-list-item>
                     <nuxt-link :to="`/member/`+post.email">
@@ -22,7 +21,7 @@
                         </v-list-item-title>
                         <v-list-item-subtitle>{{ post.createdAt}}</v-list-item-subtitle>
                     </v-list-item-content>
-                    <div v-if="post.fileCnt>0">
+                    <div v-if="post.fileCnt>0 && !post.isDeleted">
                         <v-icon>mdi-paperclip</v-icon>
                         {{ post.fileCnt }}
                     </div>
@@ -42,21 +41,21 @@
             <div v-if="!post.isDeleted">
                 <v-card-actions>
                     <v-menu offset-y open-on-hover>
-                    <template v-slot:activator="{ on }">
-                    <v-btn text color="orange" @click="onClickHeart" v-on="on">
-                        <v-icon>{{heartIcon}}</v-icon>
-                        {{post.LikesLength}}
-                    </v-btn>
-                    </template>
-                    <div style="background: white">
-                        <v-list v-for="l in post.Likes" :key="l.id" style="margin: 0 10px">
+                        <template v-slot:activator="{ on }">
+                            <v-btn text color="orange" @click="onClickHeart" v-on="on">
+                                <v-icon>{{heartIcon}}</v-icon>
+                                {{post.LikesLength}}
+                            </v-btn>
+                        </template>
+                        <div style="background: white">
+                            <v-list v-for="l in post.Likes" :key="l.id" style="margin: 0 10px">
                                 <span>
                                     <nuxt-link :to="`/member/`+l.email">
                                         {{l.email}}
                                     </nuxt-link>
                                 </span>
-                        </v-list>
-                    </div>
+                            </v-list>
+                        </div>
                     </v-menu>
                     <v-btn text color="orange" @click="onToggleComment">
                         <v-icon>mdi-comment-outline</v-icon>
@@ -80,7 +79,7 @@
 
         </v-card>
         <template v-if="commentOpened">
-            <comment-form :post-id="post.postId" v-if="authtoken"></comment-form>
+            <comment-form :post-id="post.postId" :parents-id="parentsId" v-if="authtoken"></comment-form>
             <v-list v-for="c in post.Comments" :key="c.id" style="margin: 10px 0">
                 <!--                <div style = "background-color: rgba(0, 0, 0, 0.03)">-->
                 <v-list-item>
@@ -93,19 +92,19 @@
                         <div v-if="!c.isDeleted">{{c.comments}}</div>
                         <div v-else>삭제된 댓글 입니다.</div>
                     </v-list-item-content>
-                    <v-menu offset-y open-on-hover v-if="c.email === me && !c.isDeleted">
+                    <v-menu offset-y open-on-hover v-if="!c.isDeleted">
                         <template v-slot:activator="{ on }">
                             <v-btn text color="teal" v-on="on">
                                 <v-icon>mdi-dots-horizontal</v-icon>
                             </v-btn>
                         </template>
                         <div style="background: white">
-                            <v-btn dark color="red" @click="openCommentConfirm(c.commentsId)">삭제</v-btn>
+                            <v-btn dark color="red" @click="openCommentConfirm(c.commentsId)" v-if="c.email === me">삭제</v-btn>
                             <v-btn text color="teal" @click="applyComment(c.commentsId)">답글</v-btn>
                         </div>
                     </v-menu>
                 </v-list-item>
-                <v-list-item v-for="ch in c.children" :key="c.id" style="margin: 10px 60px">
+                <v-list-item v-if="!c.isDeleted" v-for="ch in c.children" :key="c.id" style="margin: 10px 60px">
                     <v-list-item-avatar color="teal">
                         <span>{{ch.email[0]}}</span>
                     </v-list-item-avatar>
@@ -128,8 +127,12 @@
                     </v-menu>
 
                 </v-list-item>
+<!--                <div>-->
+<!--                    <div v-if="commentFormOpened">-->
+<!--                        <comment-form :post-id="post.postId" :parents-id="parentsId"/>-->
+<!--                    </div>-->
+<!--                </div>-->
 
-                <!--                </div>-->
 
             </v-list>
         </template>
@@ -181,10 +184,6 @@
                             정말 삭제하시겠습니까?
                         </v-card-title>
 
-                        <!--                                <v-card-text>-->
-                        <!--                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.-->
-                        <!--                                </v-card-text>-->
-
                         <v-divider></v-divider>
 
                         <v-card-actions>
@@ -224,6 +223,8 @@
                 dialog: false,
                 commentdialog: false,
                 commentsId: '',
+                commentFormOpened: false,
+                parentsId:'',
             };
         },
 
@@ -236,7 +237,7 @@
             },
             liked() {
                 const me = this.$store.state.user.me;
-                return !!(this.post.Likes || []).find(v =>  v.email ===  (me))
+                return !!(this.post.Likes || []).find(v => v.email === (me))
             },
             heartIcon() {
                 return this.liked ? 'mdi-heart' : 'mdi-heart-outline';
@@ -291,7 +292,9 @@
                 this.commentsId = commentsId;
             },
             applyComment(commentsId) {
-
+                console.log("commentsId --> ", commentsId);
+                this.commentFormOpened = true;
+                this.parentsId=commentsId;
             },
             commentRemove() {
                 // console.log(this.post.Comments.commentsId);
@@ -312,6 +315,7 @@
             onToggleComment() {
                 this.commentOpened = !this.commentOpened
                 if (this.commentOpened) {
+                    this.parentsId = '';
                     this.$store.dispatch('posts/loadComments', {
                         postId: this.post.postId,
                     })

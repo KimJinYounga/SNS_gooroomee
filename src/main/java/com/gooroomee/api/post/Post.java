@@ -33,7 +33,7 @@ public class Post extends CommonDateEntity {
     @Setter
     private String title;
 
-    @Column(name="content", length = 500)
+    @Column(name="content", length = 10000)
     @Setter
     private String content;
 

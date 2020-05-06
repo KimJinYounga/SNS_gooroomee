@@ -26,14 +26,12 @@ public class Comments extends CommonDateEntity {
     private String comments;
     @Setter
     private Boolean isDeleted = Boolean.FALSE;
-    @Setter
-    private Boolean isSecret = Boolean.FALSE;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "parents_id")
     private Comments parent;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "parent")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "parent", orphanRemoval = true)
     private List<Comments> children = new ArrayList<Comments>();
 
     @ManyToOne

@@ -14,6 +14,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -58,6 +59,25 @@ public class PostFileController {
     public ResponseEntity deleteFile(@PathVariable String file_id) {
         this.postFileService.deleteFile(file_id);
         return ResponseEntity.ok().build();
+    }
+
+    private class DemoData {
+        private int num;
+        private String name;
+
+        private DemoData(int num, String name) {
+            this.num = num;
+            this.name = name;
+        }
+    }
+
+    @RequestMapping("/hello")
+    public String hello() {
+        List l = new ArrayList<DemoData>();
+        for (int i = 0; i < 100000000; i++) {
+            l.add(new DemoData(i, "test" + i));
+        }
+        return "hello";
     }
 
 }

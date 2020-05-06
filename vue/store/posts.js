@@ -22,14 +22,14 @@ export const mutations = {
     removeMainPost(state, payload) {
         const index = state.mainPosts.findIndex(v => v.postId === payload.postId);
         state.mainPosts[index].title = "삭제된 게시글 입니다.";
-        state.mainPosts[index].fileCnt -=1;
+        state.mainPosts[index].fileCnt -= 1;
         // state.mainPosts.splice(index, 1);
     },
     removeComment(state, payload) {
         const postIndex = state.mainPosts.findIndex(v => v.postId === payload.postId);
-        // console.log("postIndex =>", postIndex);
+        console.log("postIndex =>", postIndex);
         const commentsIndex = state.mainPosts[postIndex].Comments.findIndex(v => v.commentsId === payload.commentsId);
-        // console.log("commentsIndex =>", commentsIndex);
+        console.log("commentsIndex =>",  state.mainPosts[postIndex].Comments[commentsIndex]);
         state.mainPosts[postIndex].Comments[commentsIndex].comments = "삭제된 댓글 입니다.";
     },
     deleteFile(state, payload) {
@@ -46,7 +46,7 @@ export const mutations = {
         // console.log("payload", payload);
         // console.log(state.mainPosts[index]);
         state.mainPosts[index].commentsLength += 1;
-        state.mainPosts[index].Comments.push(payload);
+        // state.mainPosts[index].Comments.push(payload);
 
     },
     loadPosts(state, payload) {
@@ -69,6 +69,7 @@ export const mutations = {
         Vue.set(state.mainPosts[index], 'CommentsLength', payload.CommentsLength);
     },
     likeList(state, payload) {
+        console.log("##########", payload.postId)
         const index = state.mainPosts.findIndex(v => v.postId === payload.postId);
         Vue.set(state.mainPosts[index], 'Likes', payload.data);
         Vue.set(state.mainPosts[index], 'LikesLength', payload.length);
@@ -78,7 +79,7 @@ export const mutations = {
         const emailIndex = state.mainPosts[index].Likes.findIndex(v => v.email === payload.email);
         console.log("payload.email _> ", payload.email)
         console.log("emailIndex => ", emailIndex);
-        state.mainPosts[index].Likes.splice(emailIndex,1);
+        state.mainPosts[index].Likes.splice(emailIndex, 1);
         state.mainPosts[index].LikesLength = Object.keys(state.mainPosts[index].Likes).length;
         // state.mainPosts[index].LikesLength -= 1;
     },
@@ -89,7 +90,7 @@ export const mutations = {
         });
         state.mainPosts[index].LikesLength = Object.keys(state.mainPosts[index].Likes).length;
     },
-   uploadImages(state, payload) {
+    uploadImages(state, payload) {
         if (payload.postId !== null) {
             const index = state.mainPosts.findIndex(v => v.postId === payload.postId);
             console.log(payload);
@@ -107,7 +108,7 @@ export const mutations = {
     getFiles(state, payload) {
         const postId = parseInt(payload.postId);
         const index = state.mainPosts.findIndex(v => v.postId === postId);
-        console.log("index => " , index);
+        console.log("index => ", index);
         Vue.set(state.mainPosts[index], 'uploadImages', []);
         state.mainPosts[index].uploadImages.push(payload);
     },
@@ -150,10 +151,10 @@ export const actions = {
             });
     },
     getFiles({commit, dispatch}, payload) {
-        this.$axios.get('http://localhost:8080/getFilesUrl/'+ payload.postId)
+        this.$axios.get('http://localhost:8080/getFilesUrl/' + payload.postId)
             .then((res) => {
-                    const Obj = JSON.stringify(res.data);
-                    const respObj = JSON.parse(Obj);
+                const Obj = JSON.stringify(res.data);
+                const respObj = JSON.parse(Obj);
                 commit('getFiles',
                     {
                         postId: payload.postId,
@@ -162,11 +163,11 @@ export const actions = {
                         fileId: respObj.fileId,
                     });
 
-                })
+            })
             .catch((err) => {
                 console.log("getFiles err ", err);
             })
-    } ,
+    },
     modifyPost({commit, dispatch}, payload) {
         let token = localStorage.getItem("authtoken");
         let config = {
@@ -218,9 +219,9 @@ export const actions = {
                 .then((res) => {
                         commit('removeMainPost', payload)
                         console.log("delete 성공" + res.data)
-                    this.$router.push({
-                        path: '/',
-                    });
+                        this.$router.push({
+                            path: '/',
+                        });
                     }
                 )
                 .catch((err) => {
@@ -231,7 +232,7 @@ export const actions = {
 
         }
     }, // /removeComment
-    removeComment({commit}, payload) {
+    removeComment({commit, dispatch}, payload) {
         if (localStorage.getItem("authtoken")) {
 
             let token = localStorage.getItem("authtoken");
@@ -245,6 +246,9 @@ export const actions = {
                         console.log("removeComment payload.commentsId-> ", payload.commentsId)
                         commit('removeComment', payload)
                         console.log("delete 성공" + res.data)
+                        dispatch('loadComments', {
+                            postId: payload.postId,
+                        })
                     }
                 )
                 .catch((err) => {
@@ -254,7 +258,7 @@ export const actions = {
 
         }
     },
-    deleteFile({commit},payload) {
+    deleteFile({commit}, payload) {
         this.$axios.delete(`http://localhost:8080/deleteFile/${payload.fileId}`)
             .then((res) => {
                     commit('deleteFile', payload)
@@ -265,7 +269,7 @@ export const actions = {
             })
         ;
     },
-    addComment({commit}, payload) {
+    addComment({commit, dispatch}, payload) {
         let token = localStorage.getItem("authtoken");
         let config = {
             headers: {
@@ -281,15 +285,21 @@ export const actions = {
                 const Obj = JSON.stringify(res.data);
                 const respObj = JSON.parse(Obj);
                 console.log("addComment 성공!!!!!!!!!" + Obj);
-                commit('addComment', {
-                    parentsId: respObj.parentsId,
-                    postId: respObj.post.postId,
-                    comments: respObj.comments,
-                    email: respObj.email,
-                    commentsId: respObj.commentsId,
-                    isDeleted: respObj.isDeleted,
-                    createdAt: respObj.createdAt,
+                dispatch('loadComments', {
+                    postId: payload.postId,
                 });
+                commit('addComment', {
+                    postId: payload.postId,
+                })
+                // commit('addComment', {
+                //     parentsId: respObj.parentsId,
+                //     postId: payload.postId,
+                //     comments: respObj.comments,
+                //     email: respObj.email,
+                //     commentsId: respObj.commentsId,
+                //     isDeleted: respObj.isDeleted,
+                //     createdAt: respObj.createdAt,
+                // });
                 console.log("commit 성공");
             })
             .catch((err) => {
@@ -331,7 +341,7 @@ export const actions = {
 
 
     }, 2000),
-    loadPost({commit, dispatch},payload) {
+    loadPost({commit, dispatch}, payload) {
         this.$axios.get(`http://localhost:8080/post/${payload.postId}`)
             .then((res) => {
                     // commit('loadPost', payload);
@@ -352,7 +362,7 @@ export const actions = {
         if (payload && payload.reset)
             pagination = 0;
 
-        await this.$axios.get('http://localhost:8080/posts/free?size=5&sort=postId,DESC&page=' + pagination + '&filter='+payload.filter)
+        await this.$axios.get('http://localhost:8080/posts/free?size=5&sort=postId,DESC&page=' + pagination + '&filter=' + payload.filter)
             .then((res) => {
                 console.log("posts/loadPosts 실행성공 pagination=", pagination);
                 const Obj = JSON.stringify(res.data);
@@ -373,7 +383,7 @@ export const actions = {
                         });
                         return;
                     }
-                }catch (e) {
+                } catch (e) {
                     console.log("search Posts error msg=", e)
                     // commit('loadPosts', {
                     //     data: respObj._embedded,
@@ -389,37 +399,37 @@ export const actions = {
 
     }, 2000),
     memberPosts: throttle(async function ({commit, state}, payload) {
-            if (state.hasMorePost) {
-                pagination += 1;
-                if (payload && payload.reset)
-                    pagination = 0;
+        if (state.hasMorePost) {
+            pagination += 1;
+            if (payload && payload.reset)
+                pagination = 0;
 
-                await this.$axios.get('http://localhost:8080/posts/profile/' + payload.email + '?size=5&sort=postId,DESC&page=' + pagination)
-                    .then((res) => {
-                        console.log("posts/loadPosts 실행성공 pagination=", pagination);
-                        const Obj = JSON.stringify(res.data);
-                        const respObj = JSON.parse(Obj);
-                        const json = respObj._embedded.postList;
-                        if (payload && payload.reset) {
-                            commit('loadPosts', {
-                                data: json,
-                                reset: true,
-                            });
-                            return;
-                        }
-                        if (state.hasMorePost) {
-                            commit('loadPosts', {
-                                data: json,
-                            });
-                            return;
-                        }
+            await this.$axios.get('http://localhost:8080/posts/profile/' + payload.email + '?size=5&sort=postId,DESC&page=' + pagination)
+                .then((res) => {
+                    console.log("posts/loadPosts 실행성공 pagination=", pagination);
+                    const Obj = JSON.stringify(res.data);
+                    const respObj = JSON.parse(Obj);
+                    const json = respObj._embedded.postList;
+                    if (payload && payload.reset) {
+                        commit('loadPosts', {
+                            data: json,
+                            reset: true,
+                        });
+                        return;
+                    }
+                    if (state.hasMorePost) {
+                        commit('loadPosts', {
+                            data: json,
+                        });
+                        return;
+                    }
 
-                    })
-                    .catch((err) => {
-                        console.error("loadPosts err catch! =>>   ", err);
-                    });
+                })
+                .catch((err) => {
+                    console.error("loadPosts err catch! =>>   ", err);
+                });
 
-            }
+        }
     }, 2000),
     loadComments({commit}, payload) {
         // console.log("posts/loadComments호출")
@@ -469,7 +479,7 @@ export const actions = {
         dispatch('likeList', {
             postId: payload.postId,
         });
-        this.$axios.post(`http://localhost:8080/like/${payload.postId}`,'', config)
+        this.$axios.post(`http://localhost:8080/like/${payload.postId}`, '', config)
             .then((res) => {
                 console.log("unlike post ", res.data);
                 commit('unlikePost', {
@@ -491,7 +501,7 @@ export const actions = {
         dispatch('likeList', {
             postId: payload.postId,
         });
-        this.$axios.post(`http://localhost:8080/like/${payload.postId}`, '',config)
+        this.$axios.post(`http://localhost:8080/like/${payload.postId}`, '', config)
             .then((res) => {
                 console.log("like post ", res.data);
                 commit('likePost', {

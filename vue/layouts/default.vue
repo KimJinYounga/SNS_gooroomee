@@ -8,7 +8,7 @@
                 <v-spacer/>
                 <v-toolbar-items>
                     <v-form @submit.prevent="onSearch">
-                    <v-text-field label="검색"
+                    <v-text-field label="이메일 or 글내용"
                                   v-model="filter" hide-details prepend-icon="mdi-magnify"
                                   :style="{ display: 'flex', alignItems: 'center'}"/>
                     </v-form>

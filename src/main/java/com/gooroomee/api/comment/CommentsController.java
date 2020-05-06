@@ -1,8 +1,6 @@
 package com.gooroomee.api.comment;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gooroomee.api.post.Post;
 import com.gooroomee.api.post.detail.PostDetailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,25 +21,22 @@ import java.util.List;
 @RequestMapping("/comments")
 public class CommentsController {
     private final CommentsService commentsService;
-    private final PostDetailService postDetailService;
 
     @PostMapping("/{post_id}")
     public ResponseEntity storeComments(@PathVariable Long post_id,
-                                        @RequestParam(value = "parentId", required = false) Long parentId,
+//                                        @RequestParam(value = "parentId", required = false) Long parentId,
                                         @RequestBody @Valid CommentsDto commentsDto) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null)
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         String visitorId = authentication.getName();
-        Comments comment = this.commentsService.storeComments(visitorId, post_id, commentsDto, parentId);
+        Comments comment = this.commentsService.storeComments(visitorId, post_id, commentsDto);
         return ResponseEntity.ok().body(comment);
     }
 
     @GetMapping("/{post_id}")
-    public ResponseEntity getComments(@PathVariable Long post_id) throws JsonProcessingException {
+    public ResponseEntity getComments(@PathVariable Long post_id) {
         List<CommentsDto> commentsDto = this.commentsService.getComments(post_id);
-        String comments = new ObjectMapper().writeValueAsString(commentsDto);
-        System.out.println(comments);
         return ResponseEntity.ok().body(commentsDto);
     }
 

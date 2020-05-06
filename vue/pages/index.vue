@@ -38,19 +38,20 @@
                 return this.$store.state.posts.hasMorePost;
             }
         },
-        // fetch({store}) { // 처음 시작할 때 데이터를 넣어줌
-        //     console.log("fetch ")
-        //     return store.dispatch('posts/loadPosts', {
-        //         reset: true,
-        //     });
-        // },
+        fetch({store}) { // 처음 시작할 때 데이터를 넣어줌
+            console.log("fetch ")
+            return store.dispatch('posts/loadPosts', {
+                reset: true,
+            });
+        },
 
         mounted() {
             console.log("mounted");
-            this.$store.dispatch('posts/loadPosts',
-                { reset: true,}
-            );
+
             window.addEventListener('scroll', this.onScroll);
+            // this.$store.dispatch('posts/loadPosts',
+            //     { reset: true,}
+            // );
             this.$store.dispatch('user/getMemberInfo')
         },
         beforeDestroy() {
