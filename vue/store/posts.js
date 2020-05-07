@@ -29,7 +29,8 @@ export const mutations = {
         const postIndex = state.mainPosts.findIndex(v => v.postId === payload.postId);
         console.log("postIndex =>", postIndex);
         const commentsIndex = state.mainPosts[postIndex].Comments.findIndex(v => v.commentsId === payload.commentsId);
-        console.log("commentsIndex =>",  state.mainPosts[postIndex].Comments[commentsIndex]);
+        console.log("payload.commentsId = > ", payload.commentsId);
+        console.log("comments =>",  state.mainPosts[postIndex]);
         state.mainPosts[postIndex].Comments[commentsIndex].comments = "삭제된 댓글 입니다.";
     },
     deleteFile(state, payload) {
@@ -243,12 +244,31 @@ export const actions = {
             };
             this.$axios.delete(`http://localhost:8080/comments/${payload.commentsId}`, config)
                 .then((res) => {
-                        console.log("removeComment payload.commentsId-> ", payload.commentsId)
-                        commit('removeComment', payload)
+                    const Obj = JSON.stringify(res.data);
+                    const respObj = JSON.parse(Obj);
+                    if(respObj.parent === null) {
+                        commit('removeComment', {
+                            commentsId: payload.commentsId,
+                            postId: payload.postId,
+                        })
                         console.log("delete 성공" + res.data)
                         dispatch('loadComments', {
                             postId: payload.postId,
                         })
+                    }
+                    else {
+                        dispatch('loadComments', {
+                            postId: payload.postId,
+                        })
+                    }
+                        // commit('removeComment', {
+                        //     commentsId: payload.commentsId,
+                        //     postId: payload.postId,
+                        // })
+                        // console.log("delete 성공" + res.data)
+                        // dispatch('loadComments', {
+                        //     postId: payload.postId,
+                        // })
                     }
                 )
                 .catch((err) => {
