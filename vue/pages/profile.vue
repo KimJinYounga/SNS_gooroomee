@@ -41,7 +41,7 @@
                                 </v-list-item-icon>
 
                                 <v-list-item-content>
-                                    <v-list-item-title>{{email}}</v-list-item-title>
+                                    <v-list-item-title>{{Auth.email}}</v-list-item-title>
                                     <v-list-item-subtitle>Account</v-list-item-subtitle>
                                 </v-list-item-content>
                             </v-list-item>
@@ -50,7 +50,7 @@
                                 <v-list-item-action></v-list-item-action>
 
                                 <v-list-item-content>
-                                    <v-list-item-title>{{name}}</v-list-item-title>
+                                    <v-list-item-title>{{Auth.name}}</v-list-item-title>
                                     <v-list-item-subtitle>Name</v-list-item-subtitle>
                                 </v-list-item-content>
                             </v-list-item>
@@ -117,6 +117,9 @@
             }
         },
         computed: {
+            Auth() {
+                return this.$store.state.user.authtoken;
+            },
             profilePath() {
                 if (this.$store.state.user.profile === null) {
                     return "https://hubbee-s3.s3.amazonaws.com/static/images/default/default_profile.jpg";

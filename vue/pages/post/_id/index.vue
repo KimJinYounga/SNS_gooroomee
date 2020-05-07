@@ -1,3 +1,4 @@
+<meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
 <template>
     <v-container v-if="post">
         <post-detail :post="post"/>

@@ -14,6 +14,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -39,6 +40,7 @@ public class PostFileController {
     public ResponseEntity<InputStreamResource> testDownload(@PathVariable String file_id) throws IOException{
         PostFile postFile = this.postFileService.getFile(file_id);
         String ext = FilenameUtils.getExtension(postFile.getFile_name());
+        System.out.println("file name===================" + postFile.getFile_name());
         String Path = postFile.getFile_url()+"\\"+postFile.getFile_id() +"."+ext;
         File file = new File(Path);
         InputStreamResource resource = new InputStreamResource(new FileInputStream(file));

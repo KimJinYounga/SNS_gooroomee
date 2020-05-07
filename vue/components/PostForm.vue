@@ -124,7 +124,6 @@
                     postId: null,
                 })
                 .then(() => {
-                    this.$refs.imageSpace.hide();
                 })
                 ;
             },

@@ -13,6 +13,7 @@ export const state = () => ({
     followingList: [],
     profile: null,
     memberName: null,
+    Mem: null,
 });
 
 
