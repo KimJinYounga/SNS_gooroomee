@@ -27,7 +27,8 @@ public class ProfileImageService {
 
     @Transactional
     public ProfileImage storeProfileImage(String email, MultipartFile file) {
-        String test_file_path = "C:\\Users\\gooroomee\\uploads\\profile\\";
+//        File.separator
+        String test_file_path = "C:\\Users"+File.separator+"gooroomee\\uploads\\profile\\";
         File f = new File(test_file_path);
         if (!f.exists()) f.mkdirs();
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
@@ -47,6 +48,7 @@ public class ProfileImageService {
         }
         ProfileImage savedImage = profileImageRepository.save(profileImage);
         String ext = FilenameUtils.getExtension(fileName);
+//        file.transferTo();
         try (
                 FileOutputStream fos = new FileOutputStream(test_file_path + savedImage.getFile_id() +"."+ext);
                 InputStream is = file.getInputStream();) {
