@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.CacheControl;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequiredArgsConstructor
@@ -41,9 +43,10 @@ public class ProfileImageController {
         File file = new File(Path);
         InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION,
-                        "attachment;filename="+file.getName())
+//                .header(HttpHeaders.CONTENT_DISPOSITION,
+//                        "attachment;filename="+file.getName())
                 .contentType(MediaType.parseMediaType(profileImage.getFile_type())).contentLength(file.length())
+                .cacheControl(CacheControl.maxAge(600, TimeUnit.SECONDS))
                 .body(resource);
     }
 
