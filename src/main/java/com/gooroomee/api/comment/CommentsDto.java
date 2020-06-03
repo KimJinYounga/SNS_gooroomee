@@ -13,7 +13,7 @@ import java.util.List;
 public class CommentsDto {
     private Long commentsId;
     private String comments;
-    private List<CommentsDto> children;
+//    private List<CommentsDto> children;
     private String email;
     private Long postId;
     private Boolean isDeleted;

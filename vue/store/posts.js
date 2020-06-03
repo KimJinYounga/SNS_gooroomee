@@ -69,6 +69,15 @@ export const mutations = {
         // console.log("CommentsLength", payload.CommentsLength);
         Vue.set(state.mainPosts[index], 'CommentsLength', payload.CommentsLength);
     },
+    loadReplies(state, payload) {
+        const postIndex = state.mainPosts.findIndex(v => v.postId === payload.postId);
+        // console.log("postIndex ======= ", postIndex);
+        const commentsIndex = state.mainPosts[postIndex].Comments.findIndex(v => v.commentsId === payload.commentsId);
+        // console.log("commentsIndex ======= ", commentsIndex);
+        Vue.set(state.mainPosts[postIndex].Comments[commentsIndex],'children', payload.data);
+
+
+    },
     likeList(state, payload) {
         console.log("##########", payload.postId)
         const index = state.mainPosts.findIndex(v => v.postId === payload.postId);
@@ -232,7 +241,8 @@ export const actions = {
             ;
 
         }
-    }, // /removeComment
+    },
+    // /removeComment
     removeComment({commit, dispatch}, payload) {
         if (localStorage.getItem("authtoken")) {
 
@@ -470,6 +480,27 @@ export const actions = {
             })
             .catch((err) => {
                 console.log("comments 실패", err)
+            })
+    },
+    loadReplies({commit, dispatch}, payload) {
+        this.$axios.get(`http://localhost:8080/comments/reply/${payload.commentsId}`)
+            .then((res) => {
+                // console.log("comments 성공")
+                const Obj = JSON.stringify(res.data);
+                const respObj = JSON.parse(Obj);
+                // console.log("=========")
+                // console.log(respObj)
+                commit('loadReplies',
+                    {
+                        commentsId: payload.commentsId,
+                        postId: payload.postId,
+                        data: respObj,
+                        // CommentsLength: respObj.length,
+                    });
+
+            })
+            .catch((err) => {
+                console.log("loadReplies 실패", err)
             })
     },
     likeList({commit}, payload) {

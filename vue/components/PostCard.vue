@@ -89,49 +89,69 @@
                     <v-list-item-content class="comment">
                         <h3>{{c.email}}</h3>
                         <h6>{{c.createdAt}} </h6>
-                        <div v-if="!c.isDeleted">{{c.comments}}</div>
+                        <div v-if="!c.isDeleted">
+                            <div>
+                                {{c.comments}}
+                            </div>
+                            <template>
+                                <v-btn text @click="reply(c.commentsId)">
+                                    <v-icon>mdi-message-reply-text</v-icon>
+                                    답글보기
+                                </v-btn>
+                            </template>
+                        </div>
                         <div v-else>삭제된 댓글 입니다.</div>
+                        <div>
+
+                        </div>
+
                     </v-list-item-content>
+
+
                     <v-menu offset-y open-on-hover v-if="!c.isDeleted">
+
                         <template v-slot:activator="{ on }">
                             <v-btn text color="teal" v-on="on">
                                 <v-icon>mdi-dots-horizontal</v-icon>
                             </v-btn>
                         </template>
                         <div style="background: white">
-                            <v-btn dark color="red" @click="openCommentConfirm(c.commentsId)" v-if="c.email === me">삭제</v-btn>
+                            <v-btn dark color="red" @click="openCommentConfirm(c.commentsId)" v-if="c.email === me">삭제
+                            </v-btn>
                             <v-btn text color="teal" @click="applyComment(c.commentsId)">답글</v-btn>
                         </div>
                     </v-menu>
                 </v-list-item>
-                <v-list-item v-if="!c.isDeleted" v-for="ch in c.children" :key="c.id" style="margin: 10px 60px">
-                    <v-list-item-avatar color="teal">
-                        <span>{{ch.email[0]}}</span>
-                    </v-list-item-avatar>
-                    <v-list-item-content class="comment">
-                        <h3>{{ch.email}}</h3>
-                        <h6>{{ch.createdAt}} </h6>
-                        <div v-if="!ch.isDeleted">{{ch.comments}}</div>
-                        <div v-else>삭제된 댓글 입니다.</div>
-                    </v-list-item-content>
-                    <v-menu offset-y open-on-hover v-if="ch.email === me && !ch.isDeleted">
-                        <template v-slot:activator="{ on }">
-                            <v-btn text color="teal" v-on="on">
-                                <v-icon>mdi-dots-horizontal</v-icon>
-                            </v-btn>
-                        </template>
-                        <div style="background: white">
-                            <v-btn dark color="red" @click="openCommentConfirm(ch.commentsId)">삭제</v-btn>
-                            <!--                            <v-btn text color="teal" @click="onCommentEditPost">수정</v-btn>-->
-                        </div>
-                    </v-menu>
+                <template v-if="replyOpened">
+                    <v-list-item v-if="!c.isDeleted" v-for="ch in c.children" :key="c.id" style="margin: 10px 60px">
+                        <v-list-item-avatar color="teal">
+                            <span>{{ch.email[0]}}</span>
+                        </v-list-item-avatar>
+                        <v-list-item-content class="comment">
+                            <h3>{{ch.email}}</h3>
+                            <h6>{{ch.createdAt}} </h6>
+                            <div v-if="!ch.isDeleted">{{ch.comments}}</div>
+                            <div v-else>삭제된 댓글 입니다.</div>
+                        </v-list-item-content>
+                        <v-menu offset-y open-on-hover v-if="ch.email === me && !ch.isDeleted">
+                            <template v-slot:activator="{ on }">
+                                <v-btn text color="teal" v-on="on">
+                                    <v-icon>mdi-dots-horizontal</v-icon>
+                                </v-btn>
+                            </template>
+                            <div style="background: white">
+                                <v-btn dark color="red" @click="openCommentConfirm(ch.commentsId)">삭제</v-btn>
+                                <!--                            <v-btn text color="teal" @click="onCommentEditPost">수정</v-btn>-->
+                            </div>
+                        </v-menu>
 
-                </v-list-item>
-<!--                <div>-->
-<!--                    <div v-if="commentFormOpened">-->
-<!--                        <comment-form :post-id="post.postId" :parents-id="parentsId"/>-->
-<!--                    </div>-->
-<!--                </div>-->
+                    </v-list-item>
+                </template>
+                <!--                <div>-->
+                <!--                    <div v-if="commentFormOpened">-->
+                <!--                        <comment-form :post-id="post.postId" :parents-id="parentsId"/>-->
+                <!--                    </div>-->
+                <!--                </div>-->
 
 
             </v-list>
@@ -219,12 +239,13 @@
             return {
                 fav: false,
                 commentOpened: false,
+                replyOpened: false,
                 visible: false,
                 dialog: false,
                 commentdialog: false,
                 commentsId: '',
                 commentFormOpened: false,
-                parentsId:'',
+                parentsId: '',
             };
         },
 
@@ -249,16 +270,16 @@
                         return "http://localhost:8080" + profile.href;
                     }
                 } catch (e) {
-                    return "https://hubbee-s3.s3.amazonaws.com/static/images/default/default_profile.jpg";
+                    return "https://i.stack.imgur.com/l60Hf.png";
                 }
-                return "https://hubbee-s3.s3.amazonaws.com/static/images/default/default_profile.jpg";
+                return "https://i.stack.imgur.com/l60Hf.png";
 
             }
         },
         mounted() {
-            this.$store.dispatch('posts/likeList', {
-                postId: this.post.postId,
-            });
+            // this.$store.dispatch('posts/likeList', {
+            //     postId: this.post.postId,
+            // });
         },
         methods: {
             onClickHeart() {
@@ -294,7 +315,22 @@
             applyComment(commentsId) {
                 console.log("commentsId --> ", commentsId);
                 this.commentFormOpened = true;
-                this.parentsId=commentsId;
+                this.parentsId = commentsId;
+            },
+            reply(commentsId) {
+                this.replyOpened = !this.replyOpened
+                if (this.replyOpened) {
+                    this.$store.dispatch('posts/loadReplies', {
+                        postId: this.post.postId,
+                        commentsId: commentsId,
+                    })
+                        .then((res) => {
+                            console.log("loadComments success")
+                        })
+                        .catch((err) => {
+                            console.log("loadComments err")
+                        })
+                }
             },
             commentRemove() {
                 // console.log(this.post.Comments.commentsId);

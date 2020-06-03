@@ -12,9 +12,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
+import java.math.BigInteger;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -51,9 +56,18 @@ public class CommentsService {
     @Transactional
     public List<CommentsDto> getComments(Long post_id) {
         List<Comments> comments = commentsRepository.findCommentsByParentAndPost_PostId(null, post_id);
-
+//        List<Comments> comments = commentsRepository.findComments(post_id);
         List<CommentsDto> commentsDtos = new ArrayList<CommentsDto>();
         for (Comments dto : comments) {
+            commentsDtos.add(modelMapper.map(dto, CommentsDto.class));
+        }
+        return commentsDtos;
+    }
+    @Transactional
+    public List<CommentsDto> findCommentReplies(Long comments_id) {
+        Collection<Comments> comments = commentsRepository.findCommentsByParent_CommentsId(comments_id);
+        List<CommentsDto> commentsDtos = new ArrayList<CommentsDto>();
+        for (Object dto : comments) {
             commentsDtos.add(modelMapper.map(dto, CommentsDto.class));
         }
         return commentsDtos;
@@ -65,4 +79,6 @@ public class CommentsService {
         comments.setIsDeleted(Boolean.TRUE);
         return commentsRepository.save(comments);
     }
+
+
 }
