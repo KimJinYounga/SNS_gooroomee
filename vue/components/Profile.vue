@@ -35,11 +35,11 @@
         </v-img>
 
         <v-list two-line>
-            <v-list-item @click="">
-                <v-list-item-content>
-                    <v-list-item-title>메세지 보내기</v-list-item-title>
-                </v-list-item-content>
-            </v-list-item>
+<!--            <v-list-item @click="">-->
+<!--                <v-list-item-content>-->
+<!--                    <v-list-item-title>메세지 보내기</v-list-item-title>-->
+<!--                </v-list-item-content>-->
+<!--            </v-list-item>-->
 
             <v-divider inset></v-divider>
 
@@ -65,16 +65,16 @@
 
             <v-divider inset></v-divider>
 
-            <v-list-item @click="">
-                <v-list-item-icon>
-                    <v-icon color="indigo">mdi-map-marker</v-icon>
-                </v-list-item-icon>
+<!--            <v-list-item @click="">-->
+<!--                <v-list-item-icon>-->
+<!--                    <v-icon color="indigo">mdi-map-marker</v-icon>-->
+<!--                </v-list-item-icon>-->
 
-                <v-list-item-content>
-                    <v-list-item-title>-</v-list-item-title>
-                    <v-list-item-subtitle>-</v-list-item-subtitle>
-                </v-list-item-content>
-            </v-list-item>
+<!--                <v-list-item-content>-->
+<!--                    <v-list-item-title>-</v-list-item-title>-->
+<!--                    <v-list-item-subtitle>-</v-list-item-subtitle>-->
+<!--                </v-list-item-content>-->
+<!--            </v-list-item>-->
         </v-list>
 
     </v-card>
@@ -94,20 +94,20 @@
             };
         },
         computed: {
-            profilePath() {
-                if (this.$store.state.user.profile === null) {
-                    return "https://hubbee-s3.s3.amazonaws.com/static/images/default/default_profile.jpg";
-                }
-                return "http://localhost:8080"+this.$store.state.user.profile;
-            },
-            Profile() {
-                return this.$store.state.user.memberName;
-            }
+            // profilePath() {
+            //     if (this.$store.state.user.profile === null) {
+            //         return "https://i.stack.imgur.com/l60Hf.png";
+            //     }
+            //     return "http://localhost:8080"+this.$store.state.user.profile;
+            // },
+            // Profile() {
+            //     return this.$store.state.user.memberName;
+            // }
         },
         mounted() {
-            this.$store.dispatch('user/getProfileImage', {
-                email: this.email,
-            });
+            // this.$store.dispatch('user/getProfileImage', {
+            //     email: this.email,
+            // });
             this.$store.dispatch('user/getMemberName', this.email);
         },
         methods: {

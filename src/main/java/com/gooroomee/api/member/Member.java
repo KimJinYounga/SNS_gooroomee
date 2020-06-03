@@ -1,5 +1,6 @@
 package com.gooroomee.api.member;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.gooroomee.api.common.CommonDateEntity;
 import lombok.*;
@@ -38,6 +39,7 @@ public class Member extends CommonDateEntity implements UserDetails {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(name="password", length = 100)
     @Setter
+    @JsonIgnore
     private String password;
 
     @ElementCollection(fetch = FetchType.EAGER)

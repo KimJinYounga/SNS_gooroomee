@@ -250,9 +250,9 @@
                         return "http://localhost:8080" + profile.href;
                     }
                 } catch (e) {
-                    return "https://hubbee-s3.s3.amazonaws.com/static/images/default/default_profile.jpg";
+                    return "https://i.stack.imgur.com/l60Hf.png";
                 }
-                return "https://hubbee-s3.s3.amazonaws.com/static/images/default/default_profile.jpg";
+                return "https://i.stack.imgur.com/l60Hf.png";
 
             }
         },

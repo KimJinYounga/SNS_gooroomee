@@ -20,13 +20,13 @@
                                         <v-icon>mdi-camera</v-icon>
                                     </v-btn>
 
-                                    <v-btn dark icon class="mr-4">
-                                        <v-icon>mdi-pencil</v-icon>
-                                    </v-btn>
+<!--                                    <v-btn dark icon class="mr-4">-->
+<!--                                        <v-icon>mdi-pencil</v-icon>-->
+<!--                                    </v-btn>-->
 
-                                    <v-btn dark icon>
-                                        <v-icon>mdi-dots-vertical</v-icon>
-                                    </v-btn>
+<!--                                    <v-btn dark icon>-->
+<!--                                        <v-icon>mdi-dots-vertical</v-icon>-->
+<!--                                    </v-btn>-->
                                 </v-card-title>
 
                                 <v-spacer></v-spacer>
@@ -55,11 +55,11 @@
                                 </v-list-item-content>
                             </v-list-item>
 
-                            <v-list-item @click="">
-                                <v-list-item-content>
-                                    <v-list-item-title>저장</v-list-item-title>
-                                </v-list-item-content>
-                            </v-list-item>
+<!--                            <v-list-item @click="">-->
+<!--                                <v-list-item-content>-->
+<!--                                    <v-list-item-title>저장</v-list-item-title>-->
+<!--                                </v-list-item-content>-->
+<!--                            </v-list-item>-->
                         </v-list>
 
                     </v-card>
@@ -122,7 +122,7 @@
             },
             profilePath() {
                 if (this.$store.state.user.profile === null) {
-                    return "https://hubbee-s3.s3.amazonaws.com/static/images/default/default_profile.jpg";
+                    return "https://i.stack.imgur.com/l60Hf.png";
                 }
                 return "http://localhost:8080"+this.$store.state.user.profile;
             }
