@@ -40,6 +40,12 @@ public class CommentsController {
         return ResponseEntity.ok().body(commentsDto);
     }
 
+    @GetMapping("/reply/{comments_id}")
+    public ResponseEntity getCommentReplies(@PathVariable Long comments_id) {
+        List<CommentsDto> commentsDto = this.commentsService.findCommentReplies(comments_id);
+        return ResponseEntity.ok().body(commentsDto);
+    }
+
     @DeleteMapping("/{comments_id}")
     public ResponseEntity deletePost(@PathVariable Long comments_id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

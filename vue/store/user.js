@@ -70,10 +70,11 @@ export const actions = {
             let token = data.headers.authtoken;
             localStorage.setItem("authtoken", token);
             // console.log("===========", token);
-            dispatch('getMemberInfo');
+            // dispatch('getMemberInfo');
 
-            // commit('setMe', payload);
+            commit('setMe', payload.email);
             commit('setAuth', token);
+
         }).catch((err) => {
             alert("다시 로그인 해주세요!");
             console.error("다시 로그인하라!!!!", err);
@@ -139,7 +140,7 @@ export const actions = {
                     // commit('getProfile',res.data.name);
                     // commit('setMe', res.data.email);
                     // commit('setAuth', res.data)
-                    getMemberName
+                    // getMemberName
                 })
                 .catch(err => {
                     console.log("get axios user" + err)
@@ -200,18 +201,18 @@ export const actions = {
         xhr.send(); // 요청 전송
 
         // dfsdfsf##################
-        this.$axios.get('http://localhost:8080/getProfileUrl/'+payload.email)
-            .then(res => {
-                const respObj = JSON.parse(res.data);
-                commit('getProfile',respObj.fileDownloadUri);
-                // commit('getProfile',res.data.name);
-                // commit('setMe', res.data.email);
-                // commit('setAuth', res.data)
-
-            })
-            .catch(err => {
-                console.log("get axios user" + err)
-            });
+        // this.$axios.get('http://localhost:8080/getProfileUrl/'+payload.email)
+        //     .then(res => {
+        //         const respObj = JSON.parse(res.data);
+        //         commit('getProfile',respObj.fileDownloadUri);
+        //         // commit('getProfile',res.data.name);
+        //         // commit('setMe', res.data.email);
+        //         // commit('setAuth', res.data)
+        //
+        //     })
+        //     .catch(err => {
+        //         console.log("get axios user" + err)
+        //     });
     },
     logOut({commit}, payload) {
         commit('setAuth', null);

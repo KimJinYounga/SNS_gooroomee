@@ -38,7 +38,8 @@ public class LikeController {
         if (authentication == null)
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         String visitorId = authentication.getName();
-        System.out.println("visitorId -- "+ visitorId);
+        log.info("Like-visitorId[{}]", visitorId);
+//        System.out.println("visitorId -- "+ visitorId);
         try {
             LikeListDto likePost = this.likeService.likePost(post_id, visitorId);
             return ResponseEntity.ok(likePost);
