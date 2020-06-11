@@ -1,7 +1,7 @@
 module.exports={
 
     head: {
-        title:'NodeBird..',
+        title:'Gooroomee',
     },
     modules: [
         '@nuxtjs/axios',

@@ -13,10 +13,10 @@ import java.util.List;
 public class CommentsDto {
     private Long commentsId;
     private String comments;
-    private Boolean isSecret;
     private List<CommentsDto> children;
     private String email;
     private Long postId;
     private Boolean isDeleted;
     private LocalDateTime createdAt;
+    private Long parentsId;
 }

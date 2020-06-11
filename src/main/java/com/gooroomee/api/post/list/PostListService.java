@@ -17,9 +17,21 @@ public class PostListService {
     private final CommentsRepository commentsRepository;
 
 
-    public Page<Post> getPostsList(String board_type, Pageable pageable) {
-        Page<Post> page = this.postRepository.findAllByBoard_BoardType(board_type, pageable);
-//        log.info("count Comments!! => "+commentsRepository.countAllByPost_PostId((long) 62));
+    public Page<Post> getPostsList(String board_type, String filter, Pageable pageable) {
+        Page<Post> page;
+        if (filter == null) {
+            page = this.postRepository.findAllByBoard_BoardType(board_type, pageable);
+        }
+        else {
+//            page = this.postRepository.findAllByBoard_BoardTypeAndEmail(board_type, filter, pageable);
+            page = this.postRepository.findAllByEmailAndContent(filter, pageable);
+            System.out.println("page ==> " + page);
+        }
+        return page;
+    }
+
+    public Page<Post> getMemberPostsList(String email, Pageable pageable) {
+        Page<Post> page = this.postRepository.findAllByEmail(email, pageable);
         return page;
     }
 }

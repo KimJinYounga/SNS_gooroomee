@@ -1,4 +1,5 @@
 <template>
+    <v-container>
     <v-card style="margin-bottom: 20px">
         <v-container>
             <v-form ref="form" v-model="valid" @submit.prevent="onSubmitForm">
@@ -19,11 +20,19 @@
                 />
                 <v-btn type="submit" color="green" absolute right>수정</v-btn>
                 <input ref="imageInput" type="file" multiple hidden @change="onChangeImages">
-                <v-btn @click="onClickImageUpload" type="button">이미지 업로드</v-btn>
+                <v-btn @click="onClickImageUpload" type="button">파일 업로드</v-btn>
+<!--                <v-list-item v-for="f in post.uploadImages" :key="f.id" style="margin: 10px 0">-->
+
             </v-form>
+            <div v-for="f in post.uploadImages" >
+                <a v-bind:href="downloadUri(f.uri)" >{{f.fileName}}</a>
+                <button @click="onRemoveImage(f.fileId)" type="button"><v-icon>mdi-close-thick</v-icon></button>
+            </div>
+
 
         </v-container>
     </v-card>
+    </v-container>
 </template>
 
 <script>
@@ -38,20 +47,30 @@
                 successMessages: '',
                 success: false,
                 content: '',
+
                 // title:'',
             }
         },
         mounted() {
+            this.$store.dispatch('posts/getFiles', {
+                postId: this.$route.params.id
+            });
             this.title = this.post.title;
             this.content = this.post.content;
+
+
         },
         computed: {
             ...mapState('user', ['me']),
             post() {
                 return this.$store.state.posts.mainPosts.find(v => v.postId === parseInt(this.$route.params.id, 10)); // 동적 라우팅(파일이름의 '_id')
             },
+
         },
         methods: {
+            downloadUri(link) {
+                return "http://localhost:8080" + link;
+            },
             onChangeTextarea(value) {
                 if (value.length) {
                     this.hideDetails = true;
@@ -60,6 +79,13 @@
                 }
             },
             onSubmitForm() {
+                let fileId;
+                if (this.post.uploadImages[0] === undefined) {
+                    fileId=undefined;
+                }
+                else{
+                    fileId = this.post.uploadImages[0].fileId;
+                }
                 console.log("===============================", this.post.postId);
                 if (this.$refs.form.validate()) {
                     this.$store.dispatch('posts/modifyPost', {
@@ -73,6 +99,7 @@
                             email: this.me,
                         },
                         Comments: [],
+                        fileId: fileId,
                     })
                         .then(() => {
                             this.content = '';
@@ -97,7 +124,17 @@
                 [].forEach.call(e.target.files, (f) => {
                     imageFormData.append('file', f);
                 });
-                this.$store.dispatch('posts/uploadImages', imageFormData);
+                console.log("boundary => ", imageFormData);
+                this.$store.dispatch('posts/uploadImages', {
+                    file: imageFormData,
+                    postId: this.post.postId,
+                });
+            },
+            onRemoveImage(fileId) {
+                this.$store.dispatch('posts/deleteFile', {
+                    fileId: fileId,
+                    postId: this.post.postId,
+                });
             },
         },
     };

@@ -4,20 +4,38 @@
             <!--            <v-image/>-->
             <v-card-text>
                 <v-list-item>
-                    <v-list-item-avatar color="teal">
-                        <span>{{ post.email[0] }}</span>
-                    </v-list-item-avatar>
+                    <nuxt-link :to="`/member/`+post.email">
+                        <v-list-item-avatar color="teal">
+                            <v-img
+                                    :src="profileImage"
+
+                            />
+                            <!--                            <span>{{ post.email[0] }}</span>-->
+                        </v-list-item-avatar>
+                    </nuxt-link>
                     <v-list-item-content>
-                        <v-list-item-title>{{ post.email }}</v-list-item-title>
+
+                        <v-list-item-title>
+                            <nuxt-link :to="`/member/`+post.email">
+                                {{ post.email }}
+                            </nuxt-link>
+                        </v-list-item-title>
                         <v-list-item-subtitle>{{ post.createdAt}}</v-list-item-subtitle>
                     </v-list-item-content>
+                    <div v-if="post.fileCnt>0">
+                        <v-icon>mdi-paperclip</v-icon>
+                        {{ post.fileCnt }}
+                    </div>
+
                 </v-list-item>
+
                 <v-list-item>
                     <v-list-item-content>
                         <v-list-item-title>{{ post.title }}</v-list-item-title><br /><br />
-                        <v-list-item-action-text> {{ post.content }}</v-list-item-action-text>
+                        <br>
                     </v-list-item-content>
                 </v-list-item>
+                <div>{{ post.content }}</div>
                 <v-list-item  v-if="post.isDeleted">
                     삭제된 게시글 입니다.
                 </v-list-item>
@@ -25,12 +43,23 @@
             </v-card-text>
             <div v-if="!post.isDeleted">
                 <v-card-actions>
-                    <v-btn text color="orange">
-                        <v-icon>mdi-twitter-retweet</v-icon>
-                    </v-btn>
-                    <v-btn text color="orange">
-                        <v-icon>mdi-heart-outline</v-icon>
-                    </v-btn>
+                    <v-menu offset-y open-on-hover>
+                        <template v-slot:activator="{ on }">
+                            <v-btn text color="orange" @click="onClickHeart" v-on="on">
+                                <v-icon>{{heartIcon}}</v-icon>
+                                {{post.LikesLength}}
+                            </v-btn>
+                        </template>
+                        <div style="background: white">
+                            <v-list v-for="l in post.Likes" :key="l.id" style="margin: 0 10px">
+                                <span>
+                                    <nuxt-link :to="`/member/`+l.email">
+                                        {{l.email}}
+                                    </nuxt-link>
+                                </span>
+                            </v-list>
+                        </div>
+                    </v-menu>
                     <v-btn text color="orange" @click="onToggleComment">
                         <v-icon>mdi-comment-outline</v-icon>
                         {{ post.commentsLength}}
@@ -41,21 +70,22 @@
                                 <v-icon>mdi-dots-horizontal</v-icon>
                             </v-btn>
                         </template>
-                        <div style="background: white" >
+                        <div style="background: white">
                             <v-btn dark color="red" @click="openConfirm">삭제</v-btn>
-                            <v-btn text color="orange" @click="onEditPost">수정</v-btn>
+                            <nuxt-link :to="'/post/edit/' + post.postId">
+                                <v-btn text color="orange">수정</v-btn>
+                            </nuxt-link>
                         </div>
                     </v-menu>
                 </v-card-actions>
             </div>
 
         </v-card>
-        <template>
+        <template v-if="commentOpened">
             <comment-form :post-id="post.postId" v-if="authtoken"></comment-form>
-            <v-list>
+            <v-list v-for="c in post.Comments" :key="c.id" style="margin: 10px 0">
                 <!--                <div style = "background-color: rgba(0, 0, 0, 0.03)">-->
-
-                <v-list-item v-for="c in post.Comments" :key="c.id" style="margin: 10px 0">
+                <v-list-item>
                     <v-list-item-avatar color="teal">
                         <span>{{c.email[0]}}</span>
                     </v-list-item-avatar>
@@ -71,12 +101,36 @@
                                 <v-icon>mdi-dots-horizontal</v-icon>
                             </v-btn>
                         </template>
-                        <div style="background: white" >
+                        <div style="background: white">
                             <v-btn dark color="red" @click="openCommentConfirm(c.commentsId)">삭제</v-btn>
-                            <!--                            <v-btn text color="teal" @click="onCommentEditPost">수정</v-btn>-->
+                            <v-btn text color="teal" @click="applyComment(c.commentsId)">답글</v-btn>
                         </div>
                     </v-menu>
                 </v-list-item>
+                <v-list-item v-for="ch in c.children" :key="c.id" style="margin: 10px 60px">
+                    <v-list-item-avatar color="teal">
+                        <span>{{ch.email[0]}}</span>
+                    </v-list-item-avatar>
+                    <v-list-item-content class="comment">
+                        <h3>{{ch.email}}</h3>
+                        <h6>{{ch.createdAt}} </h6>
+                        <div v-if="!ch.isDeleted">{{ch.comments}}</div>
+                        <div v-else>삭제된 댓글 입니다.</div>
+                    </v-list-item-content>
+                    <v-menu offset-y open-on-hover v-if="ch.email === me && !ch.isDeleted">
+                        <template v-slot:activator="{ on }">
+                            <v-btn text color="teal" v-on="on">
+                                <v-icon>mdi-dots-horizontal</v-icon>
+                            </v-btn>
+                        </template>
+                        <div style="background: white">
+                            <v-btn dark color="red" @click="openCommentConfirm(ch.commentsId)">삭제</v-btn>
+                            <!--                            <v-btn text color="teal" @click="onCommentEditPost">수정</v-btn>-->
+                        </div>
+                    </v-menu>
+
+                </v-list-item>
+
                 <!--                </div>-->
 
             </v-list>
@@ -166,11 +220,12 @@
         },
         data() {
             return {
-                commentOpened: false,
+                fav: false,
+                commentOpened: true,
                 visible: false,
                 dialog: false,
                 commentdialog: false,
-                commentsId:'',
+                commentsId: '',
             };
         },
 
@@ -180,9 +235,46 @@
             },
             authtoken() {
                 return this.$store.state.user.authtoken;
+            },
+            liked() {
+                const me = this.$store.state.user.me;
+                return !!(this.post.Likes || []).find(v =>  v.email ===  (me))
+            },
+            heartIcon() {
+                return this.liked ? 'mdi-heart' : 'mdi-heart-outline';
+            },
+            profileImage() {
+                try {
+                    const profile = this.post._links.profileImage;
+                    if (profile !== undefined) {
+                        return "http://localhost:8080" + profile.href;
+                    }
+                } catch (e) {
+                    return "https://hubbee-s3.s3.amazonaws.com/static/images/default/default_profile.jpg";
+                }
+                return "https://hubbee-s3.s3.amazonaws.com/static/images/default/default_profile.jpg";
+
             }
         },
+        mounted() {
+            this.$store.dispatch('posts/likeList', {
+                postId: this.post.postId,
+            });
+        },
         methods: {
+            onClickHeart() {
+                if (!this.me) {
+                    return alert('로그인이 필요합니다.');
+                }
+                if (this.liked) {
+                    return this.$store.dispatch('posts/unlikePost', {
+                        postId: this.post.postId,
+                    });
+                }
+                return this.$store.dispatch('posts/likePost', {
+                    postId: this.post.postId,
+                });
+            },
             ok() {
                 this.$store.dispatch('posts/remove', {
                     postId: this.post.postId,
@@ -199,6 +291,9 @@
             openCommentConfirm(commentsId) {
                 this.commentdialog = true;
                 this.commentsId = commentsId;
+            },
+            applyComment(commentsId) {
+
             },
             commentRemove() {
                 // console.log(this.post.Comments.commentsId);
@@ -240,6 +335,7 @@
         color: inherit;
         text-decoration: none;
     }
+
     .comment {
         background-color: rgba(0, 0, 0, 0.04)
     }

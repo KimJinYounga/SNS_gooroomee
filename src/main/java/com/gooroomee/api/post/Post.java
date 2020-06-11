@@ -1,10 +1,20 @@
 package com.gooroomee.api.post;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.gooroomee.api.board.Board;
 import com.gooroomee.api.common.CommonDateEntity;
 import com.gooroomee.api.member.Member;
+import com.gooroomee.api.post.like.Like;
 import lombok.*;
+import org.springframework.web.bind.annotation.GetMapping;
+
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 @Builder
 @AllArgsConstructor
@@ -12,6 +22,7 @@ import javax.persistence.*;
 @Getter
 @EqualsAndHashCode(of="postId", callSuper = false)
 @Entity
+@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class)
 @Table(name="t_post")
 public class Post extends CommonDateEntity {
     @Id @GeneratedValue(strategy= GenerationType.IDENTITY)
@@ -22,7 +33,7 @@ public class Post extends CommonDateEntity {
     @Setter
     private String title;
 
-    @Column(name="content", length = 500)
+    @Column(name="content", length = 10000)
     @Setter
     private String content;
 
@@ -40,6 +51,11 @@ public class Post extends CommonDateEntity {
     @Setter
     private Boolean isDeleted = Boolean.FALSE;
 
+    @Builder.Default
+    @Column(name="fileCnt")
+    @Setter
+    private Long fileCnt = (long)0;
+
     @ManyToOne
     @JoinColumn(name = "member_id")
     @Setter
@@ -49,6 +65,11 @@ public class Post extends CommonDateEntity {
     @JoinColumn(name="board_id")
     @Setter
     private Board board;
+
+//    @Builder.Default
+//    @OneToMany
+//    @JsonIgnore
+//    private List<Like> like = new ArrayList<Like>();
 
     protected Board getBoard(){
         return board;

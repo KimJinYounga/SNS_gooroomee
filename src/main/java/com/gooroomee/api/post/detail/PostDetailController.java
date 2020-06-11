@@ -2,9 +2,15 @@ package com.gooroomee.api.post.detail;
 
 import com.gooroomee.api.board.BoardRepository;
 import com.gooroomee.api.error.exception.BoardNotFoundException;
+import com.gooroomee.api.files.profileImage.ProfileImage;
+import com.gooroomee.api.files.profileImage.ProfileImageRepository;
 import com.gooroomee.api.post.Post;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.server.mvc.ControllerLinkBuilder;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -15,6 +21,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
+import java.net.URI;
+import java.util.Optional;
+
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 
 @Controller
@@ -24,7 +33,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 @RequestMapping("/post")
 public class PostDetailController {
     private final PostDetailService postDetailService;
-
+    private final ProfileImageRepository profileImageRepository;
     private final BoardRepository boardRepository;
 
     @RequestMapping(value = "/test", method = RequestMethod.POST)
@@ -46,6 +55,7 @@ public class PostDetailController {
         return ResponseEntity.ok(postResource);
     }
 
+
     @PostMapping("/{board_type}")
     public ResponseEntity createPost(@RequestBody @Valid PostDetailDto postDetailDto,
                                      @PathVariable(name = "board_type") String boardType,
@@ -55,9 +65,14 @@ public class PostDetailController {
 //            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         try {
             Post post = this.postDetailService.storePost(postDetailDto, boardType);
-            return ResponseEntity.ok().body(post);
+            PostCreateResource postCreateResource = new PostCreateResource(post);
+            Optional<ProfileImage> fileByEmail = profileImageRepository.findAllByEmail(post.getEmail());
+            if(fileByEmail.isPresent()) {
+                postCreateResource.add(new Link("/profileImage/"+fileByEmail.get().getFile_id()).withRel("profileImage"));
+            }
+            return ResponseEntity.ok().body(postCreateResource);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body("게시판등록실패");
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -90,4 +105,5 @@ public class PostDetailController {
         }
 
     }
+
 }

@@ -68,6 +68,17 @@ public class AuthController {
         Member member = authService.getMember(visitorId);
         return ResponseEntity.ok(member);
     }
+
+    @GetMapping("/member/{email}")
+    public ResponseEntity getProfile(@PathVariable String email){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null)
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        String visitorId = authentication.getName();
+        Member member = authService.getMember(email);
+        return ResponseEntity.ok(member);
+    }
+
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(CEmailSigninFailedException.class)
     protected ResponseEntity emailSigninFailed(HttpServletRequest request, CEmailSigninFailedException e){

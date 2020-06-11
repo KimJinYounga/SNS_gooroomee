@@ -11,7 +11,7 @@
          :success-messages="successMessages"
          @input="onChangeTextarea"
         />
-        <v-btn color="green" dark absolute top right type="submit">삐약</v-btn>
+        <v-btn color="green" dark absolute top right type="submit">전송</v-btn>
 
     </v-form>
 </template>
@@ -20,6 +20,9 @@
     export default {
         name: "CommentForm",
         props:{
+            parentsId: {
+                // type: Number,
+            },
             postId:{
                 type: Number,
                 required:true,
@@ -32,9 +35,13 @@
                 success:false,
                 successMessages:'',
                 hideDetails:true,
+                // parentId: this.parentsId,
             }
         },
         computed: {
+            // parentId() {
+            //   return this.parentsId;
+            // },
             me() {
                 return this.$store.state.user.me;
             },
@@ -42,6 +49,7 @@
         methods:{
             onSubmitForm() {
                 if(this.$refs.form.validate()) {
+                    console.log("this.parentsId 1 -> ", this.parentsId);
                     this.$store.dispatch('posts/addComment', {
                         // id:Date.now(),
                         parentsId: this.parentsId,
@@ -57,6 +65,8 @@
                             this.success=true;
                             this.successMessages='댓글이 작성되었습니다.';
                             this.hideDetails=false;
+                            this.parentsId = '';
+                            console.log("this.parentsId 2 -> ", this.parentsId);
                         })
                         .catch(() => {
 
