@@ -1,0 +1,66 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/gooroomee?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Seoul
+    username: jinyoung.kim
+    password: 1234
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    open-in-view: false
+    show-sql: true
+    hibernate:
+      format_sql: true
+#      ddl-auto: create
+
+  jackson:
+    deserialization:
+      fail-on-unknown-properties : true
+
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 400MB
+      max-request-size: 415MB
+
+  http:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+
+  freemarker:
+    suffix: .ftl
+    template-loader-path: classpath:/templates
+  devtools:
+    livereload:
+      enabled: true
+    freemarker:
+      cache: false
+    restart:
+      enabled: false
+
+  jwt:
+    secret: govlepel@$&amp;
+
+  profiles:
+    active: alpha
+
+log:
+  slack:
+    enabled: true
+    webHookUrl: https://hooks.slack.com/services/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
+    channel: gooroomee
+  database:
+    enabled: true
+  level: ERROR
+
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: DEBUG
+        type:
+          descriptor:
+            sql:
+              BasicBinder: TRACE # 바인드 파라미터 출력
